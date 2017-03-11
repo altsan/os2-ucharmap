@@ -1,0 +1,60 @@
+#include <os2.h>
+#include "resource.h"
+
+ICON ID_MAINPROGRAM   "..\\graphic\\program.ico"
+
+MENU ID_MAINPROGRAM
+BEGIN
+    SUBMENU "~File",                                IDM_FILE
+    BEGIN
+        MENUITEM "E~xit",                           ID_QUIT,            MIS_TEXT
+    END
+    SUBMENU "~Edit",                                IDM_EDIT
+    BEGIN
+        MENUITEM "Copy selected\tCtrl+Ins",         ID_COPY,            MIS_TEXT
+        MENUITEM "Remove last\tBackspace",          ID_DELETE,          MIS_TEXT
+        MENUITEM "Clear\tCtrl+Del",                 ID_CLEAR,           MIS_TEXT
+        MENUITEM SEPARATOR
+        MENUITEM "Re-copy all",                     ID_RECOPY,          MIS_TEXT
+    END
+    SUBMENU "~Options",                             IDM_SETUP
+    BEGIN
+        MENUITEM "Character ~font...",              ID_FONT,            MIS_TEXT
+        MENUITEM SEPARATOR
+        MENUITEM "Copy ~Unicode",                   ID_UCS,             MIS_TEXT, MIA_CHECKED
+    END
+    SUBMENU "~Help",                                IDM_HELP
+    BEGIN
+        MENUITEM "~General help",                   ID_HELP,            MIS_HELP | MIS_TEXT
+        MENUITEM SEPARATOR
+        MENUITEM "Product information",             ID_ABOUT,           MIS_TEXT
+    END
+END
+
+STRINGTABLE
+BEGIN
+    IDS_HELP_TITLE          "DBCSMAP"
+    IDS_ERROR_CHANGECP      "Unable to set codepage %d."
+    IDS_ERROR_COPYTEXT      "Error copying to clipboard.\n%s(): 0x%X"
+    IDS_ERROR_COPYUCS       "Error copying Unicode text.\n%s(): 0x%X"
+END
+
+ACCELTABLE ID_MAINPROGRAM
+BEGIN
+    VK_F3,        ID_QUIT,      VIRTUALKEY
+    VK_INSERT,    ID_COPY,      VIRTUALKEY | CONTROL
+    VK_DELETE,    ID_CLEAR,     VIRTUALKEY | CONTROL
+    VK_BACKSPACE, ID_DELETE,    VIRTUALKEY
+END
+
+HELPTABLE ID_MAINPROGRAM
+BEGIN
+    HELPITEM ID_MAINPROGRAM, HSTB_MAIN, 100
+END
+
+HELPSUBTABLE HSTB_MAIN
+BEGIN
+END
+
+RCINCLUDE "resource.dlg"
+

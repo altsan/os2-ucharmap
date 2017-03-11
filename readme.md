@@ -1,4 +1,4 @@
-=Extended Character Map for OS/2=
+# Extended Character Map for OS/2
 
 Extended Character Map for OS/2 (previously known as Double Byte Character
 Map) is a character map program that is designed to support characters from
@@ -15,7 +15,7 @@ Extended Character Map does not require your system codepage(s) to be set to
 any particular value.  It should be fully-functional on any language version
 of OS/2.
 
-==License==
+## License
 
 Extended Character Map for OS/2
 (C) 2005-2017 Alex Taylor

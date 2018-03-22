@@ -343,7 +343,6 @@ void DrawVSItem( HWND hwnd, HPS hps, RECTL rclItem, USHORT usRow, USHORT usCol )
     PCH         pchGlyph;               // multi-byte text of glyph to draw
     PSZ         pszFontName;            // name of font in use
 
-
     // Draw the cell background and border
     WinFillRect( hps, &rclItem, SYSCLR_WINDOW );
     GpiSetColor( hps, SYSCLR_WINDOWFRAME );
@@ -394,7 +393,12 @@ void DrawVSItem( HWND hwnd, HPS hps, RECTL rclItem, USHORT usRow, USHORT usCol )
     GpiQueryFontMetrics( hps, sizeof(FONTMETRICS), &fm );
     ptl.x = rclItem.xLeft + ( lCW / 2 );
     ptl.y = rclItem.yBottom + (( lCH - fm.lXHeight ) / 2 );
-    GpiSetTextAlignment( hps, TA_CENTER, TA_BASE );
+    if ( fm.fsType & FM_TYPE_FIXED ) {
+        ptl.x -= FixedCharWidth( pGlobal->suGlyph[ ucCell ], fm ) / 2;
+        GpiSetTextAlignment( hps, TA_LEFT, TA_BASE );
+    }
+    else
+        GpiSetTextAlignment( hps, TA_CENTER, TA_BASE );
 
     // Now draw the glyph
     GpiSetColor( hps, SYSCLR_WINDOWTEXT );
@@ -403,7 +407,8 @@ void DrawVSItem( HWND hwnd, HPS hps, RECTL rclItem, USHORT usRow, USHORT usCol )
     rclClip.xRight  = rclItem.xRight - 1;
     rclClip.yTop    = rclItem.yTop - 1;
 
-    GpiCharStringPosAt( hps, &ptl, &rclClip, CHS_CLIP, strlen(pchGlyph), pchGlyph, NULL );
+    GpiCharStringPosAt( hps, &ptl, &rclClip, CHS_CLIP,
+                        strlen(pchGlyph), pchGlyph, NULL );
 
 }
 
@@ -486,8 +491,14 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
             // now centre the glyph and display it
             ptl.x = rcl.xRight / 2;
             ptl.y = ( rcl.yTop - fm.lXHeight ) / 2;
+            if ( fm.fsType & FM_TYPE_FIXED ) {
+                ptl.x -= FixedCharWidth( pgpd->ucUCS, fm ) / 2;
+                GpiSetTextAlignment( hps, TA_LEFT, TA_BASE );
+            }
+            else
             GpiSetTextAlignment( hps, TA_CENTER, TA_BASE );
-            GpiCharStringPosAt( hps, &ptl, &rclClip, CHS_CLIP, strlen(pgpd->szText), pgpd->szText, NULL );
+            GpiCharStringPosAt( hps, &ptl, &rclClip, CHS_CLIP,
+                                strlen(pgpd->szText), pgpd->szText, NULL );
 
             WinEndPaint( hps );
             return (MRESULT) 0;
@@ -495,11 +506,13 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
         case UPW_QUERYGLYPH:
             pgpd = WinQueryWindowPtr( hwnd, 0 );
             strncpy( (PSZ) mp1, pgpd->szText, sizeof(pgpd->szText)-1 );
+            mp2 = MPFROMSHORT( pgpd->ucUCS );
             return (MRESULT) TRUE;
 
         case UPW_SETGLYPH:
             pgpd = WinQueryWindowPtr( hwnd, 0 );
             strncpy( pgpd->szText, (PSZ) mp1, sizeof(pgpd->szText)-1 );
+            pgpd->ucUCS = (UniChar) SHORT1FROMMP( mp2 );
             WinInvalidateRect( hwnd, NULL, FALSE );
             return (MRESULT) TRUE;
 
@@ -1359,7 +1372,8 @@ void SelectCharacter( HWND hwnd, USHORT usRow, USHORT usCol )
     WinSetDlgItemText( hwnd, IDD_NUMBER, szCharIndex );
 
     pszGlyph = ( pGlobal->fSecondary[ucCell] ) ? pszGlyph = pGlobal->szGlyph[ ucCell ] : "";
-    WinSendDlgItemMsg( hwnd, IDD_SAMPLE, UPW_SETGLYPH, MPFROMP(pszGlyph), MPVOID );
+    WinSendDlgItemMsg( hwnd, IDD_SAMPLE, UPW_SETGLYPH, MPFROMP(pszGlyph),
+                       MPFROMSHORT(pGlobal->suGlyph[ucCell]) );
 
 }
 
@@ -1694,6 +1708,47 @@ void UpdateWindowSize( HWND hwnd, SHORT usW, SHORT usH )
 
     WinSetWindowPos( hwndVS, 0L, ptVS[0].x, ptVS[0].y, ptVS[1].x, ptVS[1].y, SWP_SIZE | SWP_SHOW );
 
+}
+
+
+/* ------------------------------------------------------------------------- *
+ * FixedCharWidth                                                            *
+ *                                                                           *
+ * This is used as a workaround for a GPI bug, where fixed-width fonts have  *
+ * incorrect character increments drawn or queried with Gpi(Query)CharString *
+ * under a Unicode codepage.  So in such a case we determine the width       *
+ * manually ourselves.                                                       *
+ *                                                                           *
+ * There are two types of fixed-width font we have to deal with: "pure"      *
+ * fixed-width fonts where each character truly shares the same increment    *
+ * (except for special zero-width characters, or glyphs substituted in using *
+ * the PM DBCS gluph-association feature); and fixed-width-plus-CJK fonts    *
+ * which report as monospaced but which render CJK characters (and a few     *
+ * others) at double-width.                                                  *
+ *                                                                           *
+ * ARGUMENTS:                                                                *
+ *   Unichar     uc : The Unicode character (UCS-2 codepoint) to examine.    *
+ *   FONTMETRICS fm : The current font metrics.                              *
+ *                                                                           *
+ * RETURNS: LONG                                                             *
+ *   The calculated character increment (width).                             *
+ * ------------------------------------------------------------------------- */
+LONG FixedCharWidth( UniChar uc, FONTMETRICS fm )
+{
+    BOOL fHybridCJK;       // Is font a hybrid fixed-width/CJK font?
+
+    fHybridCJK = fm.lMaxCharInc > fm.lAveCharWidth ? TRUE : FALSE;
+
+    if ( uc < 0xFF )
+        return ( fm.lAveCharWidth );
+    else if ( fHybridCJK && IS_CJK_DOUBLEWIDTH( uc ))
+        return fm.lMaxCharInc;
+    else if ( IS_DOUBLEWIDTH( uc ))
+        return fm.lAveCharWidth * 2;
+    else if ( IS_ZEROWIDTH( uc ))
+        return 0;
+    else
+        return ( fm.lAveCharWidth );
 }
 
 

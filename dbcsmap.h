@@ -72,6 +72,29 @@
 #define ISLEADINGBYTE( bVal ) \
     (( bVal > 1 && bVal < 5 ) ? TRUE : FALSE )
 
+/* The following macros are used to identify characters that require special
+ * width-calculation logic in fixed-width fonts.  This is a workaround for
+ * a bug in GPI's positioning calculations.
+ */
+
+// Characters which should be treated as double-width in a dedicated CJK font
+#define IS_CJK_DOUBLEWIDTH( c ) (((( c >= 0x0400 ) && ( c <= 0x044F )) || \
+                                   ( c == 0x00A8 ) || ( c == 0x00B4 )  || \
+                                  (( c >= 0x2010 ) && ( c <= 0x203B )) || \
+                                  (( c >= 0x2100 ) && ( c <= 0xA6FF )) || \
+                                  (( c >= 0xAC00 ) && ( c <= 0xFF5F )))? 1: 0 )
+
+// Characters which should be treated as double-width in a normal fixed-width font
+#define IS_DOUBLEWIDTH( c )     (((( c >= 0x1100 ) && ( c <= 0x11FF )) || \
+                                  (( c >= 0x2E80 ) && ( c <= 0xA4CF )) || \
+                                  (( c >= 0xAC00 ) && ( c <= 0xD7AF )) || \
+                                  (( c >= 0xF900 ) && ( c <= 0xFAFF )) || \
+                                  (( c >= 0xFE30 ) && ( c <= 0xFE4F )) || \
+                                  (( c >= 0xFF00 ) && ( c <= 0xFF5F )))? 1: 0 )
+
+// Special characters which are classified as displayable but have zero width
+#define IS_ZEROWIDTH( c )       (((( c >= 0x200B ) && ( c <= 0x200F )))? 1: 0 )
+
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 
@@ -95,6 +118,7 @@ typedef struct _Global_Data {
 typedef struct _Preview_Data {
     CHAR        szText[ CHARSTRING_MAXZ ];          // MBCS character to display
     ULONG       ulCP;                               // selected codepage
+    UniChar     ucUCS;                              // UCS-2 value of selected character
 } GLYPRCDATA, *PGLYPRCDATA;
 
 // Information used for tracking displayed scrollable text in clipboard viewer
@@ -140,5 +164,6 @@ void             CopyToClipboard( HWND hwnd, USHORT usCol, USHORT usRow );
 void             DeleteFromClipboard( HWND hwnd );
 void             UpdateClipboard( HWND hwnd, PDCMGLOBAL pGlobal );
 void             UpdateWindowSize( HWND hwnd, SHORT usW, SHORT usH );
+LONG             FixedCharWidth( UniChar uc, FONTMETRICS fm );
 MRESULT EXPENTRY AboutDlgProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
 

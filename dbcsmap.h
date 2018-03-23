@@ -64,6 +64,11 @@
 #define ErrorPopup( text ) \
     WinMessageBox( HWND_DESKTOP, HWND_DESKTOP, text, "Error", 0, MB_OK | MB_ERROR )
 
+// Is this a multi-byte codepage?
+#define IS_DBCS_CODEPAGE( cp ) \
+    ((( cp == 942 ) || ( cp == 943 ) || ( cp == 944 )  || ( cp == 948 ) || \
+      ( cp == 949 ) || ( cp == 950 ) || ( cp == 1381 ) || ( cp == 1386 ))? 1 : 0 )
+
 // Convert a pair of bytes to a UniChar
 #define BYTES2UNICHAR( bFirst, bSecond ) \
     (( bFirst << 8 ) | bSecond )

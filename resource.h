@@ -34,6 +34,8 @@
 #define IDD_NUMBER                  105
 #define IDD_CLIPBOARD               106
 #define IDD_GBCLIP                  107
+#define IDD_LEADING                 108
+#define IDD_PREFIX                  109
 #define IDD_CLIPSCROLL              110
 
 #define IDD_ABOUT                   200
@@ -47,7 +49,7 @@
 #define IDS_ERROR_CHANGECP          10001
 #define IDS_ERROR_COPYTEXT          10002
 #define IDS_ERROR_COPYUCS           10003
-
+#define IDS_CODEPAGE_DESC           10004
 
 // Help subtable IDs
 

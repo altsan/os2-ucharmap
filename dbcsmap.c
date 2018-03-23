@@ -358,7 +358,7 @@ void DrawVSItem( HWND hwnd, HPS hps, RECTL rclItem, USHORT usRow, USHORT usCol )
     ucCell   = (usRow-1)*16 + (usCol-1);
     pchGlyph = (PCH) pGlobal->szGlyph[ ucCell ];
 
-    if ( ! pGlobal->fSecondary[ucCell] ) {
+    if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ) && !pGlobal->fSecondary[ucCell] ) {
         ptl.x  = rclItem.xLeft + 1;
         ptl.y  = rclItem.yBottom + 1;
         GpiMove( hps, &ptl );
@@ -491,14 +491,14 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
             // now centre the glyph and display it
             ptl.x = rcl.xRight / 2;
             ptl.y = ( rcl.yTop - fm.lXHeight ) / 2;
-            if ( fm.fsType & FM_TYPE_FIXED ) {
+            if (( pgpd->ulCP == UNICODE ) && ( fm.fsType & FM_TYPE_FIXED )) {
                 ptl.x -= FixedCharWidth( pgpd->ucUCS, fm ) / 2;
                 GpiSetTextAlignment( hps, TA_LEFT, TA_BASE );
             }
             else
-            GpiSetTextAlignment( hps, TA_CENTER, TA_BASE );
+                GpiSetTextAlignment( hps, TA_CENTER, TA_BASE );
             GpiCharStringPosAt( hps, &ptl, &rclClip, CHS_CLIP,
-                                strlen(pgpd->szText), pgpd->szText, NULL );
+                                strlen(pgpd->szText), (PCH) pgpd->szText, NULL );
 
             WinEndPaint( hps );
             return (MRESULT) 0;
@@ -939,12 +939,15 @@ void WindowSetup( HWND hwnd )
                usSelWard = 0,           // selected lead byte (from INI)
                i, j;                    // loop counters
     CHAR       szIni[ CCHMAXPATH ],     // name of program INI file
-               szFont[ FACESIZE ];      // last used font (from INI)
+               szFont[ FACESIZE ],      // last used font (from INI)
+               szSysCP[ CPDESC_MAXZ ],  // name of active system codepage
+               szBuf[ CPDESC_MAXZ ];    // buffer for reading string resource for above
     BOOL       fCopyUni;                // Unicode copy setting (from INI)
     LONG       x  = 0,                  // window position values (from INI)
                y  = 0,
                cx = 0,
                cy = 0;
+    ULONG      ulCP;                    // active system codepage
 
 
     pGlobal = WinQueryWindowPtr( hwnd, 0 );
@@ -957,7 +960,19 @@ void WindowSetup( HWND hwnd )
     hicon = WinLoadPointer( HWND_DESKTOP, 0, ID_MAINPROGRAM );
     WinSendMsg( hwnd, WM_SETICON, MPFROMP(hicon), MPVOID );
 
+    // Get the currently active codepage
+    ulCP = WinQueryCp( pGlobal->hmq );
+    if ( ! WinLoadString( pGlobal->hab, 0, IDS_CODEPAGE_DESC, CPDESC_MAXZ-1, szBuf ))
+        sprintf( szBuf, "%u (system codepage)");
+    sprintf( szSysCP, szBuf, ulCP );
+
     // Populate the codepage selector
+    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                       MPFROMSHORT(LIT_END), MPFROMP("Unicode (Plane 0)"));
+    if ( ! IS_DBCS_CODEPAGE( ulCP )) {
+        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP(szSysCP) );
+    }
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                        MPFROMSHORT(LIT_END), MPFROMP("942 (Japan SJIS-1978)"));
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
@@ -974,8 +989,6 @@ void WindowSetup( HWND hwnd )
                        MPFROMSHORT(LIT_END), MPFROMP("1381 (China GB)"));
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                        MPFROMSHORT(LIT_END), MPFROMP("1386 (China GBK)"));
-    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("Unicode (Plane 0)"));
 
     // Activate ownerdraw mode for each valueset cell
     for ( i = 0; i < 16; i++ ) {
@@ -1000,7 +1013,6 @@ void WindowSetup( HWND hwnd )
     LoadIniData( &fCopyUni,  pGlobal->hIni, PRF_APP_SETTINGS, PRF_KEY_UNICLIP );
 
     // Now set the initial values
-    if ( usSelCP == 0 ) usSelCP = 8;
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_SELECTITEM,
                        MPFROMSHORT( usSelCP ), MPFROMSHORT( TRUE ));
     if ( usSelWard > 0 )
@@ -1181,7 +1193,8 @@ BOOL ChangeCodepage( HWND hwnd, ULONG ulCP )
     USHORT      i;                   // loop index
     APIRET      ulRc;                // return code
     UniChar     suCP[ CPSPEC_MAXZ ]; // codepage specification string
-    BOOL        fAnySec = FALSE;     // are any valid secondary bytes reported?
+    BOOL        fAnySec = FALSE,     // are any valid secondary bytes reported?
+                fMultiByte = TRUE;   // multi-byte codepage?
 
 
     pGlobal = WinQueryWindowPtr( hwnd, 0 );
@@ -1214,7 +1227,14 @@ BOOL ChangeCodepage( HWND hwnd, ULONG ulCP )
             WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_INSERTITEM,
                                MPFROMSHORT(LIT_END), MPFROMP(szBuf) );
         }
-    } else {
+    }
+    else if ( ! IS_DBCS_CODEPAGE( ulCP )) {
+        memset( pGlobal->fSecondary, 0, 256 );
+        fMultiByte = FALSE;
+        WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP("0") );
+    }
+    else {
         ulRc = UniQueryUconvObject( pGlobal->uconvCP, NULL, 0,
                                     fPrimary, pGlobal->fSecondary, NULL );
         if ( ulRc == NO_ERROR ) {
@@ -1242,6 +1262,10 @@ BOOL ChangeCodepage( HWND hwnd, ULONG ulCP )
     // Select the first available lead byte by default
     WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_SELECTITEM,
                        MPFROMSHORT( 0 ), MPFROMSHORT( TRUE ));
+
+    WinEnableControl( hwnd, IDD_LEADING, fMultiByte );
+    WinEnableControl( hwnd, IDD_PREFIX,  fMultiByte );
+    WinEnableControl( hwnd, IDD_OFFSET,  fMultiByte );
 
     // Convert any clipboard text of ours into the new codepage
     UpdateClipboard( hwnd, pGlobal );
@@ -1302,10 +1326,11 @@ void PopulateCharMap( HWND hwnd, USHORT usOffset )
                 if ( ulRc != ULS_SUCCESS ) sprintf( szVal, "??", ulRc );
             }
             // Other codepages will be rendered directly
-            // (if we expand the program to support non-displayable codepages,
-            // we'll have to confine the following explicitly to 942/943/949/etc)
             else {
-                sprintf( szVal, "%c%c", usOffset, chVal );
+                if (( usOffset < 256 ) && IS_DBCS_CODEPAGE( pGlobal->ulCP ))
+                    sprintf( szVal, "%c%c", usOffset, chVal );
+                else
+                    sprintf( szVal, "%c", chVal );
                 // we have the codepage string; need to generate the UCS-2 value
                 psu   = suVal;
                 psz   = szVal;
@@ -1355,23 +1380,32 @@ void SelectCharacter( HWND hwnd, USHORT usRow, USHORT usCol )
     pGlobal = WinQueryWindowPtr( hwnd, 0 );
 
     // Get the current lead byte
-    sRc = (SHORT) WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_QUERYSELECTION,
-                                     MPFROMSHORT( LIT_FIRST ), MPFROMLONG( 0 ));
-    if ( sRc != LIT_NONE )
-        WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_QUERYITEMTEXT, MPFROM2SHORT(sRc, 3), MPFROMP(szBuf) );
-    else
-        sprintf( szBuf, "00");
-    if ( sscanf( szBuf, "%2X", &ucWard ) < 1 ) ucWard = 0;
+    if ( IS_DBCS_CODEPAGE( pGlobal->ulCP )) {
+        sRc = (SHORT) WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_QUERYSELECTION,
+                                         MPFROMSHORT( LIT_FIRST ), MPFROMLONG( 0 ));
+        if ( sRc != LIT_NONE )
+            WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_QUERYITEMTEXT, MPFROM2SHORT(sRc, 3), MPFROMP(szBuf) );
+        else
+            sprintf( szBuf, "00");
+        if ( sscanf( szBuf, "%2X", &ucWard ) < 1 ) ucWard = 0;
+    }
+    else ucWard = 0;
 
     // Get the current character value & update the controls
     ucCell = (usRow-1)*16 + (usCol-1);
     if ( pGlobal->ulCP == UNICODE )
         sprintf( szCharIndex, "U+%02X%02X", ucWard, ucCell );
-    else
+    else if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ))
         sprintf( szCharIndex, "0x%02X%02X  (%d:%d)", ucWard, ucCell, ucWard, ucCell );
+    else
+        sprintf( szCharIndex, "0x%02X  (%d)", ucCell, ucCell );
     WinSetDlgItemText( hwnd, IDD_NUMBER, szCharIndex );
 
-    pszGlyph = ( pGlobal->fSecondary[ucCell] ) ? pszGlyph = pGlobal->szGlyph[ ucCell ] : "";
+    if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ))
+        pszGlyph = ( pGlobal->fSecondary[ucCell] ) ? pGlobal->szGlyph[ ucCell ] : "";
+    else
+        pszGlyph = pGlobal->szGlyph[ ucCell ];
+
     WinSendDlgItemMsg( hwnd, IDD_SAMPLE, UPW_SETGLYPH, MPFROMP(pszGlyph),
                        MPFROMSHORT(pGlobal->suGlyph[ucCell]) );
 
@@ -1499,7 +1533,10 @@ void CopyToClipboard( HWND hwnd, USHORT usRow, USHORT usCol )
 
     pGlobal = WinQueryWindowPtr( hwnd, 0 );
     ucCell = (usRow-1)*16 + (usCol-1);
-    if ( ! pGlobal->fSecondary[ucCell] ) return;
+
+    // If there's no valid character in this position, do nothing
+    if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ) && !pGlobal->fSecondary[ucCell] )
+        return;
 
     // Get the selected character
     vstext.pszItemText = szCellValue;

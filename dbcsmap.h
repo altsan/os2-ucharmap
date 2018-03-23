@@ -53,6 +53,9 @@
 // Special ward value indicating single-byte characters
 #define NO_LEAD_BYTE            0xFFFF
 
+// Custom colours
+#define CCLR_BASELINE           0xE0E0E0
+
 // custom messages for glyph preview window
 #define UPW_SETGLYPH          ( WM_USER + 101 )
 #define UPW_QUERYGLYPH        ( WM_USER + 102 )

@@ -459,7 +459,9 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
     FONTMETRICS fm;                     // current font metrics
     SIZEF       sfChSize;               // character cell size
     CHAR        szFont[ FACESIZE + 4 ]; // current font name
-    LONG        lRW,                    // width of display rectangle
+    LONG        lClr,                   // colour to use when drawing glyph
+                alTable[ 1 ],           // new index colours to define
+                lRW,                    // width of display rectangle
                 lGW;                    // width of current glyph
     PSZ         pszFontName;
 
@@ -476,6 +478,9 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
         case WM_PAINT:
             pgpd = WinQueryWindowPtr( hwnd, 0 );
             hps = WinBeginPaint( hwnd, NULLHANDLE, NULLHANDLE );
+            alTable[0] = CCLR_BASELINE;
+            GpiCreateLogColorTable( hps, LCOL_RESET, LCOLF_CONSECRGB, 16, 1, alTable );
+
             WinQueryWindowRect( hwnd, &rcl );
             WinFillRect( hps, &rcl, SYSCLR_WINDOW );
             DrawNice3DBorder( hps, rcl );
@@ -505,7 +510,7 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
             sfChSize.cy = sfChSize.cx;
             GpiSetCharBox( hps, &sfChSize );
             GpiSetCharSet( hps, 1L );
-            GpiSetColor( hps, SYSCLR_WINDOWTEXT );
+            lClr = SYSCLR_WINDOWTEXT;
 
             // some very wide glyphs might not fit into our character cell...
             GpiQueryFontMetrics( hps, sizeof(FONTMETRICS), &fm );
@@ -516,18 +521,26 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
                 sfChSize.cy = sfChSize.cx;
                 GpiSetCharBox( hps, &sfChSize );
                 GpiQueryFontMetrics( hps, sizeof(FONTMETRICS), &fm );
-                GpiSetColor( hps, CLR_DARKBLUE );
+                lClr = CLR_DARKBLUE;
             }
+
+            // Draw the baseline
+            ptl.y = ( rcl.yTop - fm.lXHeight ) / 2;
+            ptl.x = rcl.xLeft + 2;
+            GpiMove( hps, &ptl );
+            ptl.x = rcl.xRight - 2;
+            GpiSetColor( hps, 16 );
+            GpiLine( hps, &ptl );
 
             // now centre the glyph and display it
             ptl.x = rcl.xRight / 2;
-            ptl.y = ( rcl.yTop - fm.lXHeight ) / 2;
             if (( pgpd->ulCP == UNICODE ) && ( fm.fsType & FM_TYPE_FIXED )) {
                 ptl.x -= FixedCharWidth( pgpd->ucUCS, fm ) / 2;
                 GpiSetTextAlignment( hps, TA_LEFT, TA_BASE );
             }
             else
                 GpiSetTextAlignment( hps, TA_CENTER, TA_BASE );
+            GpiSetColor( hps, lClr );
             GpiCharStringPosAt( hps, &ptl, &rclClip, CHS_CLIP,
                                 strlen(pgpd->szText), (PCH) pgpd->szText, NULL );
 
@@ -1435,12 +1448,16 @@ void SelectCharacter( HWND hwnd, USHORT usRow, USHORT usCol )
         sprintf( szCharIndex, "U+%02X%02X", ucWard, ucCell );
     else if ( IS_DBCS_CODEPAGE( pGlobal->ulCP )) {
         if ( *pszGlyph && ( (USHORT)(pGlobal->suGlyph[ ucCell ]) != 0xFFFD ))
-            sprintf( szCharIndex, "0x%02X%02X  (%u:%u)    U+%04X", ucWard, ucCell, ucWard, ucCell, pGlobal->suGlyph[ ucCell ] );
+            sprintf( szCharIndex, "0x%02X%02X  (%u:%u)    U+%04X", ucWard, ucCell, ucWard, ucCell, pGlobal->suGlyph[ ucCell ]);
         else
             sprintf( szCharIndex, "0x%02X%02X  (%u:%u)", ucWard, ucCell, ucWard, ucCell );
     }
-    else
-        sprintf( szCharIndex, "0x%02X  (%d)", ucCell, ucCell );
+    else {
+        if ( *pszGlyph && ( (USHORT)(pGlobal->suGlyph[ ucCell ]) != 0xFFFD ))
+            sprintf( szCharIndex, "0x%02X  (%d)    U+%04X", ucCell, ucCell, pGlobal->suGlyph[ ucCell ]);
+        else
+            sprintf( szCharIndex, "0x%02X  (%d)", ucCell, ucCell );
+    }
 
     WinSetDlgItemText( hwnd, IDD_NUMBER, szCharIndex );
     WinSendDlgItemMsg( hwnd, IDD_SAMPLE, UPW_SETGLYPH, MPFROMP(pszGlyph),

@@ -14,6 +14,9 @@
 // ----------------------------------------------------------------------------
 // CONSTANTS
 
+#define SZ_VERSION              "1.60"
+#define SZ_COPYRIGHT            "2005, 2018"
+
 #define HELP_FILE               "dbcsmap.hlp"
 #define INI_FILE                "dbcsmap.ini"
 
@@ -47,6 +50,9 @@
 // Codepage 1207 is used for drawing Unicode text under Presentation Manager
 #define PM_UNICODE              1207
 
+// Special ward value indicating single-byte characters
+#define NO_LEAD_BYTE            0xFFFF
+
 // custom messages for glyph preview window
 #define UPW_SETGLYPH          ( WM_USER + 101 )
 #define UPW_QUERYGLYPH        ( WM_USER + 102 )
@@ -77,6 +83,7 @@
 #define ISLEADINGBYTE( bVal ) \
     (( bVal > 1 && bVal < 5 ) ? TRUE : FALSE )
 
+
 /* The following macros are used to identify characters that require special
  * width-calculation logic in fixed-width fonts.  This is a workaround for
  * a bug in GPI's positioning calculations.
@@ -100,6 +107,7 @@
 // Special characters which are classified as displayable but have zero width
 #define IS_ZEROWIDTH( c )       (((( c >= 0x200B ) && ( c <= 0x200F )))? 1: 0 )
 
+
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 
@@ -108,12 +116,14 @@ typedef struct _Global_Data {
     HMQ         hmq;                                // main message queue
     HINI        hIni;                               // program INI file
     CHAR        szFont[ FACESIZE ],                 // current character font
+                fPrimary[ 256 ],                    // leading-byte flags
                 fSecondary[ 256 ],                  // secondary-byte flags
                 szGlyph[ 256 ][ CHARSTRING_MAXZ ];  // current character values
     ULONG       ulCP;                               // selected codepage
+    USHORT      usWard;                             // selected ward
     ATOM        cfUniText;                          // text/unicode clipboard format
     BOOL        fCopyUCS;                           // copy Unicode format?
-    UniChar     *psuCopied,                         // clipboard contents
+    UniChar    *psuCopied,                          // clipboard contents
                 suGlyph[ 256 ];                     // current Unicode values
     UconvObject uconv1207,                          // conversion object for UPF-8
                 uconvCP;                            // conversion object for selected codepage
@@ -149,6 +159,7 @@ typedef struct _Clipboard_Data {
 // FUNCTIONS
 
 MRESULT EXPENTRY MainWndProc( HWND, ULONG, MPARAM, MPARAM );
+BOOL             IsDisabledCell( BYTE ucCell, PDCMGLOBAL pGlobal );
 void             DrawVSItem( HWND hwnd, HPS hps, RECTL rclItem, USHORT usRow, USHORT usCol );
 MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
 MRESULT EXPENTRY ClipWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );

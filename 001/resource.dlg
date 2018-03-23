@@ -44,15 +44,16 @@ END
 
 DLGTEMPLATE IDD_ABOUT LOADONCALL MOVEABLE DISCARDABLE
 BEGIN
-    DIALOG  "Product Information", IDD_ABOUT, 1, 1, 196, 65, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
+    DIALOG  "Product Information", IDD_ABOUT, 1, 1, 196, 64, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
             PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
     BEGIN
         ICON            ID_MAINPROGRAM,                     201,            7,   34,  20,  16
         DEFPUSHBUTTON   "OK",                               DID_CANCEL,     38,  2,   40,  12
         LTEXT           "Extended Character Map",           -1,             38,  51,  150, 8
-        LTEXT           "version 1.6",                      -1,             38,  42,  150, 8
+                        PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        LTEXT           "version x.y",                      IDD_VERSION,    38,  42,  150, 8
         GROUPBOX        "",                                 -1,             38,  39,  150, 4
-        LTEXT           "(C) 2005, 2018 Alex Taylor",       -1,             38,  27,  150, 8
+        LTEXT           "(C) xxxx Alex Taylor",             IDD_COPYRIGHT,  38,  27,  150, 8
         LTEXT           "Licensed under the GNU General Public License.",
                                                             -1,             38,  18,  150, 8
     END

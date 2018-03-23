@@ -5,7 +5,7 @@
  * ------------------------------------------------------------------------- */
 int main( int argc, char *argv[] )
 {
-    DCMGLOBAL global;
+    DCMGLOBAL global = {0};
     HAB       hab;                          // anchor block handle
     HMQ       hmq;                          // message queue handle
     HWND      hwndFrame,                    // window handle
@@ -229,7 +229,8 @@ MRESULT EXPENTRY MainWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
                         if ( sRc != LIT_NONE ) {
                             WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_QUERYITEMTEXT,
                                                MPFROM2SHORT( sRc, 3 ), MPFROMP( szBuf ));
-                            sscanf( szBuf, "%02X", &ulVal );
+                            if ( sscanf( szBuf, "%02X", &ulVal ) < 1 ) ulVal = NO_LEAD_BYTE;
+                            pGlobal->usWard = (USHORT) ulVal;
                             PopulateCharMap( hwnd, ulVal );
                         }
                     }
@@ -314,6 +315,36 @@ MRESULT EXPENTRY MainWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
 
 
 /* ------------------------------------------------------------------------- *
+ * IsDisabledCell                                                            *
+ *                                                                           *
+ * ARGUMENTS:                                                                *
+ *   BYTE       ucCell : Cell number (0-255)                                 *
+ *   PDCMGLOBAL pGlobal: Pointer to global data struct                       *
+ *                                                                           *
+ * RETURNS: BOOL                                                             *
+ * ------------------------------------------------------------------------- */
+BOOL IsDisabledCell( BYTE ucCell, PDCMGLOBAL pGlobal )
+{
+    BOOL fDisable = FALSE;
+
+    // Only applies to DBCS codepages
+    if ( ! IS_DBCS_CODEPAGE( pGlobal->ulCP )) return fDisable;
+
+    // Single-byte character
+    if ( pGlobal->usWard == NO_LEAD_BYTE ) {
+        if (( ISLEADINGBYTE( pGlobal->fPrimary[ ucCell ])) ||
+            ( pGlobal->fPrimary[ ucCell ] == 255 ))
+                fDisable = TRUE;
+    }
+    // Double-byte character ward but not a valid secondary byte
+    else if ( !pGlobal->fSecondary[ ucCell ])
+        fDisable = TRUE;
+
+    return fDisable;
+}
+
+
+/* ------------------------------------------------------------------------- *
  * DrawVSItem                                                                *
  *                                                                           *
  * Ownerdraw logic for painting a text cell in the valueset.  (We have to    *
@@ -358,9 +389,9 @@ void DrawVSItem( HWND hwnd, HPS hps, RECTL rclItem, USHORT usRow, USHORT usCol )
     ucCell   = (usRow-1)*16 + (usCol-1);
     pchGlyph = (PCH) pGlobal->szGlyph[ ucCell ];
 
-    if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ) && !pGlobal->fSecondary[ucCell] ) {
-        ptl.x  = rclItem.xLeft + 1;
-        ptl.y  = rclItem.yBottom + 1;
+    if ( IsDisabledCell( ucCell, pGlobal )) {
+        ptl.x = rclItem.xLeft + 1;
+        ptl.y = rclItem.yBottom + 1;
         GpiMove( hps, &ptl );
         ptl.x = rclItem.xRight - 2;
         ptl.y = rclItem.yTop - 2;
@@ -1201,8 +1232,7 @@ BOOL ChangeCodepage( HWND hwnd, ULONG ulCP )
 {
     PDCMGLOBAL  pGlobal;             // global program data
     UconvObject uconvNew;            // conversion object for new codepage
-    UCHAR       fPrimary[ 256 ],     // array of valid leading bytes
-                szBuf[ 3 ];          // buffer for writing character bytes
+    UCHAR       szBuf[ 3 ];          // buffer for writing character bytes
     USHORT      i;                   // loop index
     APIRET      ulRc;                // return code
     UniChar     suCP[ CPSPEC_MAXZ ]; // codepage specification string
@@ -1235,6 +1265,7 @@ BOOL ChangeCodepage( HWND hwnd, ULONG ulCP )
     if ( ulCP == UNICODE ) {
         // In UCS-2, all bytes are valid leading & secondary bytes
         for ( i = 0; i < 256; i++ ) {
+            pGlobal->fPrimary[ i ] = 1;
             pGlobal->fSecondary[ i ] = 1;
             sprintf( szBuf, "%02X", i );
             WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_INSERTITEM,
@@ -1242,17 +1273,21 @@ BOOL ChangeCodepage( HWND hwnd, ULONG ulCP )
         }
     }
     else if ( ! IS_DBCS_CODEPAGE( ulCP )) {
+        memset( pGlobal->fPrimary, 1, 256 );
         memset( pGlobal->fSecondary, 0, 256 );
         fMultiByte = FALSE;
         WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_INSERTITEM,
-                           MPFROMSHORT(LIT_END), MPFROMP("0") );
+                           MPFROMSHORT(LIT_END), MPFROMP("--") );
     }
     else {
+        WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP("--") );
         ulRc = UniQueryUconvObject( pGlobal->uconvCP, NULL, 0,
-                                    fPrimary, pGlobal->fSecondary, NULL );
+                                    pGlobal->fPrimary,
+                                    pGlobal->fSecondary, NULL );
         if ( ulRc == NO_ERROR ) {
             for ( i = 0; i < 256; i++ ) {
-                if ( ISLEADINGBYTE( fPrimary[i] )) {
+                if ( ISLEADINGBYTE( pGlobal->fPrimary[i] )) {
                     // add value to byte selector
                     sprintf( szBuf, "%02X", i );
                     WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_INSERTITEM,
@@ -1261,9 +1296,10 @@ BOOL ChangeCodepage( HWND hwnd, ULONG ulCP )
                 if ( pGlobal->fSecondary[i] ) fAnySec = TRUE;
             }
             // some buggy MBCS codepages report no valid secondary bytes at all
-            if ( ! fAnySec )
+            if ( !fAnySec )
                 for ( i = 0; i < 256; i++ ) pGlobal->fSecondary[ i ] = 1;
-        } else {
+        }
+        else {
             for ( i = 0; i < 256; i++ ) {
                 sprintf( szBuf, "%02X", i );
                 WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_INSERTITEM,
@@ -1272,7 +1308,7 @@ BOOL ChangeCodepage( HWND hwnd, ULONG ulCP )
         }
     }
 
-    // Select the first available lead byte by default
+    // Select the first available ward by default
     WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_SELECTITEM,
                        MPFROMSHORT( 0 ), MPFROMSHORT( TRUE ));
 
@@ -1382,43 +1418,31 @@ void PopulateCharMap( HWND hwnd, USHORT usOffset )
 void SelectCharacter( HWND hwnd, USHORT usRow, USHORT usCol )
 {
     PDCMGLOBAL pGlobal;
-    SHORT    sRc;
-    BYTE     ucWard,
-             ucCell;
-    CHAR     szBuf[ 3 ],
-             szCharIndex[ 20 ];
-    PSZ      pszGlyph;
+    BYTE       ucWard,
+               ucCell;
+    CHAR       szCharIndex[ 32 ];
+    PSZ        pszGlyph;
 
 
     pGlobal = WinQueryWindowPtr( hwnd, 0 );
-
-    // Get the current lead byte
-    if ( IS_DBCS_CODEPAGE( pGlobal->ulCP )) {
-        sRc = (SHORT) WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_QUERYSELECTION,
-                                         MPFROMSHORT( LIT_FIRST ), MPFROMLONG( 0 ));
-        if ( sRc != LIT_NONE )
-            WinSendDlgItemMsg( hwnd, IDD_OFFSET, LM_QUERYITEMTEXT, MPFROM2SHORT(sRc, 3), MPFROMP(szBuf) );
-        else
-            sprintf( szBuf, "00");
-        if ( sscanf( szBuf, "%2X", &ucWard ) < 1 ) ucWard = 0;
-    }
-    else ucWard = 0;
+    ucWard = ( pGlobal->usWard > 255 ) ? 0 : (BYTE) pGlobal->usWard;
 
     // Get the current character value & update the controls
     ucCell = (usRow-1)*16 + (usCol-1);
+    pszGlyph = IsDisabledCell( ucCell, pGlobal ) ? "" : pGlobal->szGlyph[ ucCell ];
+
     if ( pGlobal->ulCP == UNICODE )
         sprintf( szCharIndex, "U+%02X%02X", ucWard, ucCell );
-    else if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ))
-        sprintf( szCharIndex, "0x%02X%02X  (%d:%d)", ucWard, ucCell, ucWard, ucCell );
+    else if ( IS_DBCS_CODEPAGE( pGlobal->ulCP )) {
+        if ( *pszGlyph && ( (USHORT)(pGlobal->suGlyph[ ucCell ]) != 0xFFFD ))
+            sprintf( szCharIndex, "0x%02X%02X  (%u:%u)    U+%04X", ucWard, ucCell, ucWard, ucCell, pGlobal->suGlyph[ ucCell ] );
+        else
+            sprintf( szCharIndex, "0x%02X%02X  (%u:%u)", ucWard, ucCell, ucWard, ucCell );
+    }
     else
         sprintf( szCharIndex, "0x%02X  (%d)", ucCell, ucCell );
+
     WinSetDlgItemText( hwnd, IDD_NUMBER, szCharIndex );
-
-    if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ))
-        pszGlyph = ( pGlobal->fSecondary[ucCell] ) ? pGlobal->szGlyph[ ucCell ] : "";
-    else
-        pszGlyph = pGlobal->szGlyph[ ucCell ];
-
     WinSendDlgItemMsg( hwnd, IDD_SAMPLE, UPW_SETGLYPH, MPFROMP(pszGlyph),
                        MPFROMSHORT(pGlobal->suGlyph[ucCell]) );
 
@@ -1548,8 +1572,7 @@ void CopyToClipboard( HWND hwnd, USHORT usRow, USHORT usCol )
     ucCell = (usRow-1)*16 + (usCol-1);
 
     // If there's no valid character in this position, do nothing
-    if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ) && !pGlobal->fSecondary[ucCell] )
-        return;
+    if ( IsDisabledCell( ucCell, pGlobal )) return;
 
     // Get the selected character
     vstext.pszItemText = szCellValue;
@@ -1880,9 +1903,26 @@ BOOL CodepageIsInstalled( PSZ pszPath, ULONG ulCP )
  * ------------------------------------------------------------------------- */
 MRESULT EXPENTRY AboutDlgProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
 {
+    HAB  hab;
+    CHAR szBuffer[ SZRES_MAXZ ],
+         szText[ SZRES_MAXZ ];
+
     switch ( msg ) {
 
         case WM_INITDLG:
+            hab = WinQueryAnchorBlock( hwnd );
+            if ( WinLoadString( hab, 0, IDS_VERSION, SZRES_MAXZ-1, szBuffer ))
+                sprintf( szText, szBuffer, SZ_VERSION );
+            else
+                sprintf( szText, "V%s", SZ_VERSION );
+            WinSetDlgItemText( hwnd, IDD_VERSION, szText );
+
+            if ( WinLoadString( hab, 0, IDS_COPYRIGHT, SZRES_MAXZ-1, szBuffer ))
+                sprintf( szText, szBuffer, SZ_COPYRIGHT );
+            else
+                sprintf( szText, "(C) %s", SZ_COPYRIGHT );
+            WinSetDlgItemText( hwnd, IDD_COPYRIGHT, szText );
+
             CentreWindow( hwnd );
             break;
 

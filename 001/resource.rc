@@ -38,6 +38,8 @@ BEGIN
     IDS_ERROR_COPYTEXT      "Error copying to clipboard.\n%s(): 0x%X"
     IDS_ERROR_COPYUCS       "Error copying Unicode text.\n%s(): 0x%X"
     IDS_CODEPAGE_DESC       "%u (system codepage)"
+    IDS_VERSION             "Version %s"
+    IDS_COPYRIGHT           "Copyright (C) %s Alex Taylor"
 END
 
 ACCELTABLE ID_MAINPROGRAM

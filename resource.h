@@ -39,6 +39,9 @@
 #define IDD_CLIPSCROLL              110
 
 #define IDD_ABOUT                   200
+#define IDD_ABOUTICON               201
+#define IDD_VERSION                 210
+#define IDD_COPYRIGHT               211
 
 #define IDD_FONTDLG                 300
 
@@ -50,6 +53,8 @@
 #define IDS_ERROR_COPYTEXT          10002
 #define IDS_ERROR_COPYUCS           10003
 #define IDS_CODEPAGE_DESC           10004
+#define IDS_VERSION                 10100
+#define IDS_COPYRIGHT               10101
 
 // Help subtable IDs
 

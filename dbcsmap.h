@@ -170,5 +170,7 @@ void             DeleteFromClipboard( HWND hwnd );
 void             UpdateClipboard( HWND hwnd, PDCMGLOBAL pGlobal );
 void             UpdateWindowSize( HWND hwnd, SHORT usW, SHORT usH );
 LONG             FixedCharWidth( UniChar uc, FONTMETRICS fm );
+void             GetCodepagePath( PSZ pszCPath, USHORT cb );
+BOOL             CodepageIsInstalled( PSZ pszPath, ULONG ulCP );
 MRESULT EXPENTRY AboutDlgProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
 

@@ -940,6 +940,7 @@ void WindowSetup( HWND hwnd )
                i, j;                    // loop counters
     CHAR       szIni[ CCHMAXPATH ],     // name of program INI file
                szFont[ FACESIZE ],      // last used font (from INI)
+               szCPath[ CCHMAXPATH ],   // path to codepage files
                szSysCP[ CPDESC_MAXZ ],  // name of active system codepage
                szBuf[ CPDESC_MAXZ ];    // buffer for reading string resource for above
     BOOL       fCopyUni;                // Unicode copy setting (from INI)
@@ -966,6 +967,8 @@ void WindowSetup( HWND hwnd )
         sprintf( szBuf, "%u (system codepage)");
     sprintf( szSysCP, szBuf, ulCP );
 
+    GetCodepagePath( szCPath, CCHMAXPATH );
+
     // Populate the codepage selector
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                        MPFROMSHORT(LIT_END), MPFROMP("Unicode (Plane 0)"));
@@ -973,22 +976,32 @@ void WindowSetup( HWND hwnd )
         WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                            MPFROMSHORT(LIT_END), MPFROMP(szSysCP) );
     }
-    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("942 (Japan SJIS-1978)"));
+    if ( CodepageIsInstalled( szCPath, 942 )) {
+        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP("942 (Japan SJIS-1978)"));
+    }
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                        MPFROMSHORT(LIT_END), MPFROMP("943 (Japan SJIS-1990)"));
+    if ( CodepageIsInstalled( szCPath, 944 )) {
+        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP("944 (Korea SAA)"));
+    }
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("944 (Korea SAA)"));
-    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("949 (Korea KS-Code)"));
-    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("948 (Taiwan SAA)"));
+                        MPFROMSHORT(LIT_END), MPFROMP("949 (Korea KS-Code)"));
+    if ( CodepageIsInstalled( szCPath, 948 )) {
+        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP("948 (Taiwan SAA)"));
+    }
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                        MPFROMSHORT(LIT_END), MPFROMP("950 (Taiwan BIG-5)"));
-    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("1381 (China GB)"));
-    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("1386 (China GBK)"));
+    if ( CodepageIsInstalled( szCPath, 1381 )) {
+        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP("1381 (China GB)"));
+    }
+    if ( CodepageIsInstalled( szCPath, 1386 )) {
+        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP("1386 (China GBK)"));
+    }
 
     // Activate ownerdraw mode for each valueset cell
     for ( i = 0; i < 16; i++ ) {
@@ -1786,6 +1799,77 @@ LONG FixedCharWidth( UniChar uc, FONTMETRICS fm )
         return 0;
     else
         return ( fm.lAveCharWidth );
+}
+
+
+/* ------------------------------------------------------------------------- *
+ * GetCodepagePath                                                           *
+ *                                                                           *
+ * Find the path where OS/2 keeps its installed codepage tables.  This is    *
+ * the %ULSPATH%\CODEPAGE directory, which is normally \LANGUAGE\CODEPAGE on *
+ * the boot volume.                                                          *
+ *                                                                           *
+ * ARGUMENTS:                                                                *
+ *   PSZ pszCPath : Buffer to receive the path (must be allocated)       (O) *
+ *   USHORT cb    : Length of pszCPath buffer                            (I) *
+ *                                                                           *
+ * RETURNS: N/A                                                              *
+ * ------------------------------------------------------------------------- */
+void GetCodepagePath( PSZ pszCPath, USHORT cb )
+{
+    PSZ     pszEnv;                     // returned environment variable
+    ULONG   ul;
+    APIRET  rc;
+
+    // Get the path to the codepage files (e.g. ?:\LANGUAGE\CODEPAGE)
+    if (( DosScanEnv("ULSPATH", &pszEnv ) == NO_ERROR ) && ( strlen(pszEnv) > 0 )) {
+        strncpy( pszCPath, pszEnv, cb - 1 );
+        ul = strlen( pszCPath ) - 1;
+        if ( pszCPath[ ul ] == ';') pszCPath[ ul ] = '\0';
+    }
+    else {
+        rc = DosQuerySysInfo( QSV_BOOT_DRIVE, QSV_BOOT_DRIVE, &ul, sizeof(ULONG) );
+        if (( rc != NO_ERROR ) || ( ul > 26 ) || ( ul < 1 ))
+            ul = 3;
+        sprintf( pszCPath, "%c:\\LANGUAGE", 64 + ul );
+    }
+    strncat( pszCPath, "\\CODEPAGE", cb - 1 );
+}
+
+
+/* ------------------------------------------------------------------------- *
+ * CodepageIsInstalled                                                       *
+ *                                                                           *
+ * Determine whether a given codepage is installed.  This is determined by   *
+ * whether or not the file "IBM<codepage>" exists in the given directory.    *
+ * This function does not check for aliases, so is not suitable for other    *
+ * than standard IBM codepages.                                              *
+ *                                                                           *
+ * ARGUMENTS:                                                                *
+ *   PSZ pszPath : The path to codepage files                            (I) *
+ *   ULONG ulCP  : The codepage to search for                            (I) *
+ *                                                                           *
+ * RETURNS: BOOL                                                             *
+ *   TRUE if the codepage file was found, FALSE otherwise.                   *
+ * ------------------------------------------------------------------------- */
+BOOL CodepageIsInstalled( PSZ pszPath, ULONG ulCP )
+{
+    FILEFINDBUF3 ffInfo = {0};          // file find info buffer
+    HDIR   hdFind;                      // find operation handle
+    CHAR   szCPMask[ CCHMAXPATH + 1 ];  // find mask for codepage files
+    ULONG  flFindAttr,                  // find attributes
+           ulCount;                     // number of codepages queried
+    APIRET rc;
+
+    // Now check for the installed codepage file
+    sprintf( szCPMask, "%s\\IBM%u", pszPath, ulCP );
+    hdFind = HDIR_SYSTEM;
+    flFindAttr = FILE_NORMAL | FILE_SYSTEM | FILE_HIDDEN | FILE_READONLY;
+    ulCount = 1;
+    rc = DosFindFirst( szCPMask, &hdFind, flFindAttr, &ffInfo,
+                       sizeof(ffInfo), &ulCount, FIL_STANDARD );
+    DosFindClose( hdFind );
+    return (( rc == NO_ERROR ) && ulCount ) ? TRUE : FALSE;
 }
 
 

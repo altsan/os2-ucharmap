@@ -461,7 +461,9 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
     CHAR        szFont[ FACESIZE + 4 ]; // current font name
     LONG        lClr,                   // colour to use when drawing glyph
                 alTable[ 1 ],           // new index colours to define
+                lBaseline,              // baseline position from font metrics
                 lRW,                    // width of display rectangle
+                lRH,                    // height of display rectangle
                 lGW;                    // width of current glyph
     PSZ         pszFontName;
 
@@ -493,6 +495,7 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
             rclClip.xRight  = rcl.xRight - 3;
             rclClip.yTop    = rcl.yTop - 3;
             lRW = rclClip.xRight - rclClip.xLeft;
+            lRH = rclClip.yTop - rclClip.yBottom;
 
             // now draw the glyph
             WinQueryPresParam( hwnd, PP_FONTNAMESIZE, 0, NULL, sizeof(szFont), szFont, QPF_NOINHERIT );
@@ -524,11 +527,13 @@ MRESULT EXPENTRY PreviewWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 )
                 lClr = CLR_DARKBLUE;
             }
 
-            // Draw the baseline
-            ptl.y = ( rcl.yTop - fm.lXHeight ) / 2;
-            ptl.x = rcl.xLeft + 2;
+            // Draw the baseline (offset from the centre of the display area)...
+            lBaseline = rclClip.yTop - fm.lMaxAscender;
+            // ... but never draw it above 1/3 height
+            ptl.y = min( (lRH /2 ) - (lBaseline / 2), rclClip.yTop / 3 );
+            ptl.x = rclClip.xLeft;
             GpiMove( hps, &ptl );
-            ptl.x = rcl.xRight - 2;
+            ptl.x = rclClip.xRight;
             GpiSetColor( hps, 16 );
             GpiLine( hps, &ptl );
 
@@ -1446,7 +1451,7 @@ void SelectCharacter( HWND hwnd, USHORT usRow, USHORT usCol )
 
     if ( pGlobal->ulCP == UNICODE )
         sprintf( szCharIndex, "U+%02X%02X", ucWard, ucCell );
-    else if ( IS_DBCS_CODEPAGE( pGlobal->ulCP )) {
+    else if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ) && ucWard ) {
         if ( *pszGlyph && ( (USHORT)(pGlobal->suGlyph[ ucCell ]) != 0xFFFD ))
             sprintf( szCharIndex, "0x%02X%02X  (%u:%u)    U+%04X", ucWard, ucCell, ucWard, ucCell, pGlobal->suGlyph[ ucCell ]);
         else
@@ -1454,9 +1459,9 @@ void SelectCharacter( HWND hwnd, USHORT usRow, USHORT usCol )
     }
     else {
         if ( *pszGlyph && ( (USHORT)(pGlobal->suGlyph[ ucCell ]) != 0xFFFD ))
-            sprintf( szCharIndex, "0x%02X  (%d)    U+%04X", ucCell, ucCell, pGlobal->suGlyph[ ucCell ]);
+            sprintf( szCharIndex, "0x%02X  (%u)    U+%04X", ucCell, ucCell, pGlobal->suGlyph[ ucCell ]);
         else
-            sprintf( szCharIndex, "0x%02X  (%d)", ucCell, ucCell );
+            sprintf( szCharIndex, "0x%02X  (%u)", ucCell, ucCell );
     }
 
     WinSetDlgItemText( hwnd, IDD_NUMBER, szCharIndex );

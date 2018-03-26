@@ -35,7 +35,6 @@
 #define IDD_CLIPBOARD               106
 #define IDD_GBCLIP                  107
 #define IDD_LEADING                 108
-#define IDD_PREFIX                  109
 #define IDD_CLIPSCROLL              110
 
 #define IDD_ABOUT                   200

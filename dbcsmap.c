@@ -1331,7 +1331,6 @@ BOOL ChangeCodepage( HWND hwnd, ULONG ulCP )
                        MPFROMSHORT( 0 ), MPFROMSHORT( TRUE ));
 
     WinEnableControl( hwnd, IDD_LEADING, fMultiByte );
-    WinEnableControl( hwnd, IDD_PREFIX,  fMultiByte );
     WinEnableControl( hwnd, IDD_OFFSET,  fMultiByte );
 
     // Convert any clipboard text of ours into the new codepage

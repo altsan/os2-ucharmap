@@ -1043,6 +1043,11 @@ void WindowSetup( HWND hwnd )
     }
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                        MPFROMSHORT(LIT_END), MPFROMP("950 (Taiwan BIG-5)"));
+
+    if ( CodepageIsInstalled( szCPath, 946 )) {
+        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP("946 (China SAA)"));
+    }
     if ( CodepageIsInstalled( szCPath, 1381 )) {
         WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                            MPFROMSHORT(LIT_END), MPFROMP("1381 (China GB)"));

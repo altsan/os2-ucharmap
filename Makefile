@@ -33,7 +33,7 @@ BL_VER  = "1.60"
 all         : $(NAME).exe $(NAME).hlp
 
 $(NAME).exe : $(OBJS) $(NAME).h $(MRI).h $(MRI).res Makefile
-                -@makedesc.cmd -D$(BL_DESC) -N$(BL_AUTH) -V$(BL_VER) $(NAME).def
+                -@makedesc.cmd -D$(BL_DESC) -N$(BL_AUTH) -V"^#define=SZ_VERSION,$(NAME).h" $(NAME).def
                 $(LINK) $(LFLAGS) $(OBJS) $(LIBS) $(NAME).def
                 $(RC) $(RFLAGS) $(MRI).res $@
 

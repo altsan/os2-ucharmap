@@ -2,8 +2,9 @@
 
 Extended Character Map for OS/2 (previously known as Double Byte Character
 Map) is a character map program that is designed to support characters from
-multi-byte encodings.  In particular, it supports both Unicode (Plane 0)
-text, plus a number of specific East Asian codepages.
+both single- and multi-byte encodings.  It supports both Unicode (Plane 0)
+text, plus a number of specific East Asian codepages, in addition to the
+current system codepage.
 
 Conventional OS/2 character map programs support only single-byte characters,
 which is generally sufficient for Western languages, but suddenly becomes
@@ -18,7 +19,7 @@ of OS/2.
 ## License
 
 Extended Character Map for OS/2
-(C) 2005-2017 Alex Taylor
+(C) 2005-2018 Alex Taylor
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

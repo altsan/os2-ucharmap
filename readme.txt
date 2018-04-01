@@ -1,10 +1,11 @@
 EXTENDED CHARACTER MAP FOR OS/2
-  Version 1.52 (released 2017-03-11)
+  Version 1.6 (released 2018-03-31)
 
-  Extended Character Map for OS/2 (previously known as Double Byte Character 
+  Extended Character Map for OS/2 (previously known as Double Byte Character
   Map) is a character map program that is designed to support characters from
-  multi-byte encodings.  In particular, it supports both Unicode (Plane 0)
-  text, plus a number of specific East Asian codepages.
+  both single- and multi-byte encodings.  It supports both Unicode (Plane 0)
+  text, plus a number of specific East Asian codepages, in addition to the
+  current system codepage.
 
   Conventional OS/2 character map programs support only single-byte characters,
   which is generally sufficient for Western languages, but suddenly becomes
@@ -25,20 +26,18 @@ REQUIREMENTS:
   switching bug in earlier versions (see below under "Bugs/Limitations").
 
   To be able to view any of the DBCS codepages other than Unicode, the OS/2
-  translation table for that codepage must be installed.  Recent versions of 
-  OS/2 install most of them by default, with the possible exceptions of 944
-  and 948 (which are rarely-used legacy encodings).  If you do not have the
-  required table file for a particular codepage installed, you will receive an
-  "Unable to set codepage xxx" message when you try to select that codepage.
-  (The files can be installed manually from the OS/2 install CD, by unzipping
-  \OS2IMAGE\FI\FONT\xxCODEPG.ZIP into the \LANGUAGE\CODEPAGE directory on your
-  boot drive; they should be available for use immediately, no reboot needed.)
+  translation table for that codepage must be installed.  Recent versions of
+  OS/2 install the more commonly-used ones by default, but not certain rarely-
+  used legacy 'SAA' encodings.  (Codepages which are not installed will not be
+  available in the GUI. They can be installed from the OS/2 install CD by
+  unzipping \OS2IMAGE\FI\FONT\xxCODEPG.ZIP into the \LANGUAGE\CODEPAGE
+  directory on your boot drive; no reboot is needed.)
 
   You must have a font installed which contains the characters you want to see.
-  So you need either a Unicode font with comprehensive CJK support (which is 
+  So you need either a Unicode font with comprehensive CJK support (which is
   recommended), or else specific fonts for Korean, Chinese, and/or Japanese, in
-  order to be able to view those respective character sets.  By default, 
-  Extended Character Map will attempt to use the Unicode font "Times New Roman 
+  order to be able to view those respective character sets.  By default,
+  Extended Character Map will attempt to use the Unicode font "Times New Roman
   MT 30", which should be present on most OS/2 systems.  (Under Warp 4 and Warp
   3, this may require you to install IBM Java 1.1.8, which includes this font.)
 
@@ -84,7 +83,7 @@ USAGE
     (If the character is coloured dark blue instead of black, it indicates that
     it had to be rescaled down slightly in order to fit into the preview panel.)
 
-  * The "Copied characters" panel provides some clipboard controls, including a 
+  * The "Copied characters" panel provides some clipboard controls, including a
     preview of the current clipboard buffer contents.
 
   You can change the font used for character display through the "Options" menu.
@@ -92,18 +91,18 @@ USAGE
 
 Copying and Pasting Characters
 
-  The first time you copy a character to the clipboard after starting Extended 
-  Character Map, any previous clipboard contents will be replaced.  However, 
+  The first time you copy a character to the clipboard after starting Extended
+  Character Map, any previous clipboard contents will be replaced.  However,
   Extended Character Map remembers characters that have already been copied
   since it was started, and appends newly-copied characters onto the previous
   ones.  The "Clear" button erases the current clipboard contents; the "Delete"
   button erases only the last character.
- 
+
   (Note that if you use an external program to clear or replace the clipboard
   contents while Extended Character Map is running, any characters previously
   copied with Extended Character Map will reappear the next time you copy a
   character, unless you use the "Clear" button as well.)
- 
+
   Each character is copied as a raw multi-byte value representing its semantic
   value in the currently-selected codepage (if it exists); if the option is
   enabled, they are also copied as Unicode UCS-2 values in a format supported
@@ -125,14 +124,14 @@ NOTE FOR FREETYPE/2 USERS
 
   If you use recent versions (1.20 and later) of the FreeType/2 replacement
   TrueType font driver, you should make sure that the "force Unicode encoding"
-  option is enabled.  
+  option is enabled.
 
-  These versions of FreeType/2 implement some special logic to try and work 
-  around some problems with CJK character handling under DBCS versions of 
-  OS/2.  As a side effect, however, many non-ASCII characters may not display 
+  These versions of FreeType/2 implement some special logic to try and work
+  around some problems with CJK character handling under DBCS versions of
+  OS/2.  As a side effect, however, many non-ASCII characters may not display
   correctly (or at all) if either:
    - the current font is not using Unicode encoding.
-   - the current process codepage is DBCS (e.g. 932, 949), and you are 
+   - the current process codepage is DBCS (e.g. 932, 949), and you are
      attempting to view characters from a different codepage (e.g. Unicode).
 
   In addition, these versions typically disable Unicode encoding entirely if
@@ -142,7 +141,7 @@ NOTE FOR FREETYPE/2 USERS
   Forcing FreeType/2 to always use Unicode should eliminate these problems
   for the most part.
 
-  Note that the above does not apply to version 1.10 from Michal Necasek 
+  Note that the above does not apply to version 1.10 from Michal Necasek
   (although his last release may also disable Unicode encoding for fonts with
   fewer than 2,048 glyphs).
 
@@ -155,17 +154,12 @@ BUGS/LIMITATIONS
     PMKOR, BIG5, etc.) then characters will only display correctly under the
     corresponding codepage.  Also, the characters will not display at all in
     the clipboard viewer, which always uses Unicode for display.  Unicode
-    characters will only display correctly if you use a Unicode font (which 
+    characters will only display correctly if you use a Unicode font (which
     is recommended).
 
   * The clipboard preview panel supports a maximum of 256 characters.  More
     characters can in principle be copied, but only the first 256 will be
     shown.
-
-  * You will not be able to display characters under codepages which are not
-    installed on your system (as may be the case for 938 and 944).  You can
-    install missing DBCS codepage(s) from the \OS2IMAGE\FI\FONTS directory of
-    the WSeB/MCP/ACP/eCS CD-ROM.
 
   * If you do not have a version of PMMERGE.DLL with BLDLEVEL 14.106 or
     higher, you may be affected by a bug in Presentation Manager's Unicode
@@ -179,14 +173,14 @@ BUGS/LIMITATIONS
     Unicode fonts specifically.  There are two solutions that I am aware of:
       - As mentioned, install IBM APAR PJ31908, which provides a fix; this is
         recommended.
-      - Alternatively, enabling DBCSMAP to use the Innotek Font Engine (tested 
+      - Alternatively, enabling DBCSMAP to use the Innotek Font Engine (tested
         with v2.60) apparently circumvents enough of PM's normal code to render
-        it immune.  (This does have the side effect of slightly slowing down 
+        it immune.  (This does have the side effect of slightly slowing down
         rendering, but on modern systems it should be barely noticeable.)  You
         can do this (if the Font Engine is installed) by opening the OS/2
         Registry Editor and adding a new key called "dbcsmap.exe" under
         "HKEY_LOCAL_MACHINE\SOFTWARE\InnoTek\InnoTek Font Engine\Applications".
-        Under that key, add a new DWORD value called "Enabled", and set its 
+        Under that key, add a new DWORD value called "Enabled", and set its
         value to 0x00000001 (1 decimal).
 
 
@@ -199,6 +193,20 @@ TODO
 
 
 HISTORY
+
+  1.6 (2018-03-31)
+   * Major improvements to facilitate use as a general character map program,
+     in particular support for single-byte characters.
+   * The current system codepage is now selectable.
+   * Fixed character alignment problem with monospaced fonts.
+   * Don't show codepages which aren't actually installed.
+   * Add China SAA (946) as a supported codepage, if installed.
+   * Show the baseline in the preview panel.
+   * Always show Unicode codepoint for valid Unicode characters, even in
+     other codepages.
+   * Layout adjustments for better compatibility with low screen resolutions.
+   * Updated help file to reflect changes.
+   * Executable now includes BLDLEVEL signature.
 
   1.52 (2017-03-11)
    * Renamed program to 'Extended Character Map', as the old name was rather
@@ -224,7 +232,7 @@ HISTORY
 
   1.4 (2010-02-20)
    * New clipboard viewer control.
-   * Renamed 'Copy' button to 'Add' in order to clarify its behaviour with 
+   * Renamed 'Copy' button to 'Add' in order to clarify its behaviour with
      respect to the (now-visible) clipboard buffer.
    * Added 'Delete' button to delete one character from the clipboard (the
      Backspace key now also does this).
@@ -241,7 +249,7 @@ HISTORY
    * A failure to switch codepages no longer causes the program to exit.
 
   1.2 (2007-03-22)
-   * Invalid secondary-byte values for the CJK codepages are now identified; 
+   * Invalid secondary-byte values for the CJK codepages are now identified;
      the corresponding character cells are shaded in grey.
    * Various DBCSMAP settings (including window size/position, font, and the
      current codepage selections) are now saved.

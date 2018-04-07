@@ -157,8 +157,14 @@ equivalent.
 
 :dt.944 (Korea SAA)
 :dd.This is an older IBM encoding for Korean, provided for compatibility with
-other systems. Wansung encoding (see codepage 949, below) is more commonly
+older systems. Wansung encoding (see codepage 949, below) is more commonly
 used for Korean text. This codepage is not available on all systems.
+
+:dt.946 (China SAA)
+:dd.This is an older IBM encoding for Simplified Chinese, provided for
+compatibility with older systems.  GB and/or GBK encoding (see codepages
+1381 and 1386, below) are more commonly used for Simplified Chinese text.
+This codepage is not available on all systems.
 
 :dt.948 (Taiwan SAA)
 :dd.This is an implementation of the CNS-11643 Traditional Chinese character

@@ -1457,13 +1457,13 @@ void SelectCharacter( HWND hwnd, USHORT usRow, USHORT usCol )
         sprintf( szCharIndex, "U+%02X%02X", ucWard, ucCell );
     else if ( IS_DBCS_CODEPAGE( pGlobal->ulCP ) && ucWard ) {
         if ( *pszGlyph && ( (USHORT)(pGlobal->suGlyph[ ucCell ]) != 0xFFFD ))
-            sprintf( szCharIndex, "0x%02X%02X  (%u:%u)    U+%04X", ucWard, ucCell, ucWard, ucCell, pGlobal->suGlyph[ ucCell ]);
+            sprintf( szCharIndex, "0x%02X%02X  (%u:%u)  U+%04X", ucWard, ucCell, ucWard, ucCell, pGlobal->suGlyph[ ucCell ]);
         else
             sprintf( szCharIndex, "0x%02X%02X  (%u:%u)", ucWard, ucCell, ucWard, ucCell );
     }
     else {
         if ( *pszGlyph && ( (USHORT)(pGlobal->suGlyph[ ucCell ]) != 0xFFFD ))
-            sprintf( szCharIndex, "0x%02X  (%u)    U+%04X", ucCell, ucCell, pGlobal->suGlyph[ ucCell ]);
+            sprintf( szCharIndex, "0x%02X  (%u)  U+%04X", ucCell, ucCell, pGlobal->suGlyph[ ucCell ]);
         else
             sprintf( szCharIndex, "0x%02X  (%u)", ucCell, ucCell );
     }

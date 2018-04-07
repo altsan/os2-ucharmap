@@ -1,5 +1,5 @@
 EXTENDED CHARACTER MAP FOR OS/2
-  Version 1.6 (released 2018-03-31)
+  Version 1.6 (released 2018-04-06)
 
   Extended Character Map for OS/2 (previously known as Double Byte Character
   Map) is a character map program that is designed to support characters from
@@ -194,13 +194,13 @@ TODO
 
 HISTORY
 
-  1.6 (2018-03-31)
+  1.6 (2018-04-06)
    * Major improvements to facilitate use as a general character map program,
      in particular support for single-byte characters.
    * The current system codepage is now selectable.
    * Fixed character alignment problem with monospaced fonts.
    * Don't show codepages which aren't actually installed.
-   * Add China SAA (946) as a supported codepage, if installed.
+   * Added China SAA (946) as a supported codepage, if installed.
    * Show the baseline in the preview panel.
    * Always show Unicode codepoint for valid Unicode characters, even in
      other codepages.
@@ -315,7 +315,7 @@ HISTORY
 NOTICES
 
   Extended Character Map for OS/2
-  (C) 2005-2017 Alex Taylor
+  (C) 2005-2018 Alex Taylor
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

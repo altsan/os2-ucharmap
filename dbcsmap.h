@@ -14,7 +14,7 @@
 // ----------------------------------------------------------------------------
 // CONSTANTS
 
-#define SZ_VERSION              "1.60"
+#define SZ_VERSION              "1.6"
 #define SZ_COPYRIGHT            "2005, 2018"
 
 #define HELP_FILE               "dbcsmap.hlp"

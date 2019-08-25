@@ -43,7 +43,9 @@ $(MRI).res  : {$(NLV)}$(MRI).rc {$(NLV)}$(MRI).dlg $(MRI).h
                 %cd ..
 
 $(NAME).hlp : {$(NLV)}$(NAME).ipf
-                $(IPFC) -d:$(NLV) $< $@
+                %cd $(NLV)
+                $(IPFC) -d:$(NLV) $(NAME).ipf ..\$@
+                %cd ..
 
 clean       :
                 del $(OBJS) $(MRI).res $(NAME).exe >NUL

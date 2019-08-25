@@ -18,7 +18,7 @@ of OS/2.
 
 ## License
 
-Extended Character Map for OS/2
+Extended Character Map for OS/2  
 (C) 2005-2018 Alex Taylor
 
 This program is free software; you can redistribute it and/or modify

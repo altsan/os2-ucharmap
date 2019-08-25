@@ -1,0 +1,83 @@
+#ifndef OS2_INCLUDED
+   #include <os2.h>
+#endif
+DLGINCLUDE 1 "resource.h"
+
+DLGTEMPLATE ID_MAINPROGRAM LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Mapa de Caracteres Extendido", ID_MAINPROGRAM, 12, -11, 333, 195, NOT WS_VISIBLE, FCF_SIZEBORDER | FCF_SYSMENU | FCF_TITLEBAR | FCF_MINMAX | FCF_TASKLIST
+    BEGIN
+        VALUESET                                            IDD_CHARMAP,    89,  0,   243, 181, VS_TEXT | VS_BORDER | VS_ITEMBORDER | WS_GROUP
+                                                                                                CTLDATA 8, 0, 16, 16
+                        PRESPARAMS PP_BACKGROUNDCOLORINDEX, SYSCLR_WINDOW
+        GROUPBOX        "Codificaci¢n",                     -1,             1,   141, 86,  36,  WS_GROUP
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+        GROUPBOX        "Car cter seleccionado",            -1,             1,   65,  86,  73,  WS_GROUP
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+        LTEXT           "Byte inicial:",                    IDD_LEADING,    5,   145, 52,  10,  DT_VCENTER
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+        CONTROL         "",                                 IDD_SAMPLE,     5,   77,  78,  53,  "GlyphPreview", WS_GROUP | WS_VISIBLE
+        CTEXT           "",                                 IDD_NUMBER,     6,   67,  76,  8
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+        CONTROL         "",                                 IDD_CODEPAGE,   5,   69,  78,  99,  WC_COMBOBOX, CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP | WS_VISIBLE
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+        CONTROL         ""                                  IDD_OFFSET,     58,  1,   25,  154, WC_COMBOBOX, CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP | WS_VISIBLE
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+        GROUPBOX        "Caracteres copiados",              IDD_GBCLIP,     1,   1,   86,  61,  DT_VCENTER
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+        CONTROL         "",                                 IDD_CLIPBOARD,  5,   18,  78,  36,  "ClipboardView", WS_GROUP | WS_VISIBLE
+        PUSHBUTTON      "~A¤adir",                          ID_COPY,        5,   4,   23,  12
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+        PUSHBUTTON      "~Suprimir",                        ID_DELETE,      29,  4,   28,  12,  WS_DISABLED
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+        PUSHBUTTON      "~Vaciar",                          ID_CLEAR,       58,  4,   25,  12,  WS_DISABLED
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
+
+    END
+END
+
+DLGTEMPLATE IDD_ABOUT LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Informaci¢n del Producto", IDD_ABOUT, 1, 1, 196, 64, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
+            PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        ICON            ID_MAINPROGRAM,                     201,            7,   34,  20,  16
+        DEFPUSHBUTTON   "Bien",                             DID_CANCEL,     38,  2,   40,  12
+        LTEXT           "Mapa de Caracteres Extendido",     -1,             38,  51,  150, 8
+                        PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        LTEXT           "Versi¢n x.y",                      IDD_VERSION,    38,  42,  150, 8
+        GROUPBOX        "",                                 -1,             38,  39,  150, 4
+        LTEXT           "¸ xxxx Alex Taylor",               IDD_COPYRIGHT,  38,  27,  150, 8
+        LTEXT           "Publicado bajo la Licencia P£blica General de GNU.",
+                                                            -1,             38,  18,  150, 8
+    END
+END
+
+CODEPAGE 850
+DLGTEMPLATE IDD_FONTDLG
+BEGIN
+    DIALOG  "Fuente", IDD_FONTDLG, 1, 1, 153, 95, FS_NOBYTEALIGN | FS_MOUSEALIGN, FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
+            PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+/* Font dialog controls we actually use */
+        LTEXT           "Nombre:",                              -1,                 3,   85,  100, 8,   DT_VCENTER
+        COMBOBOX        "",                                     DID_NAME,           3,   2,   147, 82,  NOT CBS_SIMPLE | CBS_DROPDOWNLIST
+        LTEXT           "Estilo:",                              -1,                 3,   64,  100, 8,   DT_VCENTER
+        COMBOBOX        "",                                     DID_STYLE,          3,   17,  147, 46,  NOT CBS_SIMPLE | CBS_DROPDOWNLIST
+        DEFPUSHBUTTON   "~Bien",                                DID_OK_BUTTON,      3,   2,   40,  12,  WS_GROUP
+        PUSHBUTTON      "Cancelar",                             DID_CANCEL_BUTTON,  45,  2,   40,  12,  NOT WS_TABSTOP
+        GROUPBOX        "Muestra",                              -1,                 3,   18,  147, 33
+        CTEXT           "abcdABCD",                             DID_SAMPLE,         7,   22,  138, 21,  DT_VCENTER
+                        PRESPARAMS PP_BACKGROUNDCOLOR,          0x00CCCCCCL
+                        PRESPARAMS PP_HILITEBACKGROUNDCOLOR,    0x00CCCCCCL
+                        PRESPARAMS PP_DISABLEDBACKGROUNDCOLOR,  0x00CC00CCL
+/* Standard font dialog controls required by PM but not used by us */
+        COMBOBOX        "",                                     DID_SIZE,           191, 0,   29,  16,  NOT CBS_SIMPLE | CBS_DROPDOWN | NOT WS_VISIBLE
+        AUTOCHECKBOX    "~Pantalla",                            DID_DISPLAY_FILTER, 158, 59,  52,  10,  NOT WS_VISIBLE
+        AUTOCHECKBOX    "~Impresi¢n",                           DID_PRINTER_FILTER, 158, 49,  51,  10,  NOT WS_TABSTOP | NOT WS_VISIBLE
+        AUTOCHECKBOX    "~Hueca",                               DID_OUTLINE,        158, 39,  42,  10,  NOT WS_VISIBLE
+        AUTOCHECKBOX    "~Subrayada",                           DID_UNDERSCORE,     158, 29,  46,  10,  NOT WS_TABSTOP | NOT WS_VISIBLE
+        AUTOCHECKBOX    "~Tachada",                             DID_STRIKEOUT,      158, 19,  47,  10,  NOT WS_TABSTOP | NOT WS_VISIBLE
+    END
+END
+

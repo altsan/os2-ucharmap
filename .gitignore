@@ -6,8 +6,8 @@
 *.EXE
 *.hlp
 *.HLP
-*.ipf
-*.IPF
+*.inf
+*.INF
 *.log
 *.LOG
 *.map

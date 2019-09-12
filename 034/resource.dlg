@@ -19,14 +19,14 @@ BEGIN
         CONTROL         "",                                 IDD_SAMPLE,     5,   77,  78,  53,  "GlyphPreview", WS_GROUP | WS_VISIBLE
         CTEXT           "",                                 IDD_NUMBER,     6,   67,  76,  8
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        CONTROL         "",                                 IDD_CODEPAGE,   5,   69,  78,  99,  WC_COMBOBOX, CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP | WS_VISIBLE
+        CONTROL         "",                                 IDD_CODEPAGE,   5,   69,  78,  99,  WC_COMBOBOX, CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP | WS_VISIBLE | LS_HORZSCROLL
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
         CONTROL         ""                                  IDD_OFFSET,     58,  1,   25,  154, WC_COMBOBOX, CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP | WS_VISIBLE
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
         GROUPBOX        "Caracteres copiados",              IDD_GBCLIP,     1,   1,   86,  61,  DT_VCENTER
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
         CONTROL         "",                                 IDD_CLIPBOARD,  5,   18,  78,  36,  "ClipboardView", WS_GROUP | WS_VISIBLE
-        PUSHBUTTON      "~A¤adir",                          ID_COPY,        5,   4,   23,  12
+        PUSHBUTTON      "A¤a~dir",                          ID_COPY,        5,   4,   23,  12
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
         PUSHBUTTON      "~Suprimir",                        ID_DELETE,      29,  4,   28,  12,  WS_DISABLED
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
@@ -38,7 +38,7 @@ END
 
 DLGTEMPLATE IDD_ABOUT LOADONCALL MOVEABLE DISCARDABLE
 BEGIN
-    DIALOG  "Informaci¢n del Producto", IDD_ABOUT, 1, 1, 196, 64, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
+    DIALOG  "Informaci¢n del producto", IDD_ABOUT, 1, 1, 196, 64, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
             PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
     BEGIN
         ICON            ID_MAINPROGRAM,                     201,            7,   34,  20,  16
@@ -48,7 +48,7 @@ BEGIN
         LTEXT           "Versi¢n x.y",                      IDD_VERSION,    38,  42,  150, 8
         GROUPBOX        "",                                 -1,             38,  39,  150, 4
         LTEXT           "¸ xxxx Alex Taylor",               IDD_COPYRIGHT,  38,  27,  150, 8
-        LTEXT           "Publicado bajo la Licencia P£blica General de GNU.",
+        LTEXT           "Publicado bajo Licencia P£blica General de GNU.",
                                                             -1,             38,  18,  150, 8
     END
 END

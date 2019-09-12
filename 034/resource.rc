@@ -11,11 +11,11 @@ BEGIN
     END
     SUBMENU "~Editar",                              IDM_EDIT
     BEGIN
-        MENUITEM "Copiar seleccionado\tCtrl+Ins",   ID_COPY,            MIS_TEXT
-        MENUITEM "Suprimir el £ltimo\tRetroceso",   ID_DELETE,          MIS_TEXT
-        MENUITEM "Vaciar\tCtrl+Supr",               ID_CLEAR,           MIS_TEXT
+        MENUITEM "~Copiar seleccionado\tCtrl+Ins",   ID_COPY,           MIS_TEXT
+        MENUITEM "~Suprimir el £ltimo\tRetroceso",   ID_DELETE,         MIS_TEXT
+        MENUITEM "~Vaciar\tCtrl+Supr",               ID_CLEAR,          MIS_TEXT
         MENUITEM SEPARATOR
-        MENUITEM "Volver a copiar todo",            ID_RECOPY,          MIS_TEXT
+        MENUITEM "Volve~r a copiar todo",            ID_RECOPY,         MIS_TEXT
     END
     SUBMENU "~Opciones",                            IDM_SETUP
     BEGIN
@@ -27,7 +27,7 @@ BEGIN
     BEGIN
         MENUITEM "Ayuda ~general",                  ID_HELP,            MIS_HELP | MIS_TEXT
         MENUITEM SEPARATOR
-        MENUITEM "Informaci¢n del producto",        ID_ABOUT,           MIS_TEXT
+        MENUITEM "~Informaci¢n del producto",        ID_ABOUT,          MIS_TEXT
     END
 END
 

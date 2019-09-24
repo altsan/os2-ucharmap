@@ -18,8 +18,8 @@ of OS/2.
 
 ## License
 
-Extended Character Map for OS/2  
-(C) 2005-2018 Alex Taylor
+Extended Character Map for OS/2
+(C) 2005-2019 Alex Taylor
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

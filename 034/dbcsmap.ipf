@@ -1,6 +1,6 @@
 :userdoc.
 
-.nameit symbol='nomsolo' text='Mapa de Caracteres Extendido'
+.nameit symbol='nomsolo' text='Mapa de caracteres extendido'
 .nameit symbol='Nomprog' text='El &nomsolo.'
 .nameit symbol='nomprog' text='el &nomsolo.'
 .nameit Symbol='leadbyte' text='byte inicial'
@@ -14,10 +14,10 @@
 funciones incluyen:
 
 :ul compact.
-:li.Soporte de caracteres Unicode (Plano MultilingÅe B†sico).
+:li.Soporte de caracteres Unicode (plano multilingÅe b†sico).
 :li.Soporte para la p†gina de c¢digos activa en el sistema actualmente.
 :li.Soporte para codificaciones multi-byte adicionales, incluidas las p†ginas
-de c¢digos de OS/2 para Asia Oriental (CJK).
+de c¢digos de OS/2 para Asia oriental (CJK).
 :li.Formato dual de portapapeles (†rea com£n), con soporte nativo de Unicode
 (reconocido por muchas aplicaciones de OS/2) adem†s de texto simple codificado
 seg£n p†ginas de c¢digos.
@@ -59,14 +59,13 @@ a§adir† todos los caracteres de byte £nico de esa p†gina de c¢digos.
 :dd.Muestra una imagen ampliada del car†cter que estÇ seleccionado actualmente
 (si alguno lo est†), con los correspondientes valores de byte mostrados
 inmediatamente debajo (tanto en formato decimal como hexadecimal). Para las
-p†ginas de c¢digos no Unicode, si el car†cter en cuesti¢n tiene
-un valor Unicode (UCS-2) correspondiente, Çste tambiÇn se muestra (con el
-prefijo ÆU+Ø).
+p†ginas de c¢digos no Unicode, si el car†cter en cuesti¢n tiene un valor
+Unicode (UCS-2) correspondiente, Çste tambiÇn se muestra (con el prefijo ÆU+Ø).
 
 :dt.Caracteres copiados
-:dd.Proporciona controles para manejar los caracteres copiados al
-portapapeles o †rea com£n. Consulte :link reftype=hd res=400.copiar
-caracteres:elink. para m†s informaci¢n.
+:dd.Proporciona controles para manejar los caracteres copiados al portapapeles
+o †rea com£n. Consulte :link reftype=hd res=400.copiar caracteres:elink. para
+m†s informaci¢n.
 :edl.
 
 :p.
@@ -224,7 +223,7 @@ extensiones MBCS-PC de IBM.
 :nt.La versi¢n de OS/2 de la p†gina de c¢digos 949 s¢lo soporta el conjunto
 de caracteres Wansung b†sico (m†s las extensiones de IBM). Hay disponible una
 p†gina de c¢digos sustituta que actualiza la 949 para cubrir la codificaci¢n
-C¢digo Hangul Unificado MS (ÆWansung ExtendidoØ).
+C¢digo Hangul Unificado MS (ÆWansung extendidoØ).
 
 :p.Para instalar la tabla actualizada de la p†gina de c¢digos, descargue
 http&colon.//www.borgendale.com/tools/ulstools.zip, extraiga del archivador la
@@ -253,13 +252,13 @@ aproximadamente equivalente a la p†gina de c¢digos 936 de Windows.
 r†pidamente en el est†ndar dominante para representar texto multilingÅe.
 
 :p.OS/2 y, por tanto, este programa s¢lo soportan el Plano 0 de Unicode,
-denominado el :hp1.Plano MultilingÅe B†sico:ehp1.. Sin embargo, esto
+denominado el :hp1.plano multilingÅe b†sico:ehp1.. Sin embargo, esto
 proporciona soporte para decenas de miles de caracteres, representando casi
 todos los sistemas de escritura en uso en el mundo actualmente.
 
 :p.&Nomprog. representa los caracteres Unicode del selector de p†ginas de
-c¢digos de acuerdo con los valores UCS-2 (Universal Character Set, Conjunto
-Universal de Caracteres) de 2 bytes. (Al copiarlos al portapapeles como texto
+c¢digos de acuerdo con los valores UCS-2 (universal character set, conjunto
+universal de caracteres) de 2 bytes. (Al copiarlos al portapapeles como texto
 simple, sin embargo, se almacenan en formato UTF-8. Consulte :link reftype=hd
 res=400.Copiar caracteres:elink. para los detalles.)
 
@@ -287,8 +286,8 @@ panel del portapapeles.
 cualesquiera caracteres copiados previamente con &nomprog.. El bot¢n ÆSuprimirØ
 s¢lo borra el £ltimo car†cter del almacenamiento intermedio del portapapeles.
 
-:p.Cuando se copia un car†cter el valor de doble byte sin procesar del car†cter
-(tal como se muestra bajo la ventana de vista previa del glifo) se coloca en el
+:p.Cuando se copia un car†cter, su valor de doble byte sin procesar (tal como
+se muestra bajo la ventana de vista previa del glifo) se coloca en el
 portapapeles como texto simple, :hp1.excepto:ehp1. en el caso de los caracteres
 Unicode, que en su lugar se almacenan como valores UTF-8 de entre uno y tres
 bytes (puesto que la mayor°a de aplicaciones no son capaces de procesar como
@@ -316,7 +315,7 @@ siempre que es posible.
 
 :p.Digamos que ha seleccionado la p†gina de c¢digos 943 (SJIS-1990 de Jap¢n) y
 copia el car†cter 0x82E2 (car†cter japonÇs ÆIAØ [o ÆYAØ, en representaci¢n
-latina Hepburn] del silabario hiragana).
+latina Hepburn o ÆromajiØ] del silabario hiragana).
 
 :p.:artwork name='943_82e2.bmp' align=center.
 

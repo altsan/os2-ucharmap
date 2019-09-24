@@ -14,8 +14,8 @@
 // ----------------------------------------------------------------------------
 // CONSTANTS
 
-#define SZ_VERSION              "1.6"
-#define SZ_COPYRIGHT            "2005, 2018"
+#define SZ_VERSION              "1.61"
+#define SZ_COPYRIGHT            "2005, 2019"
 
 #define HELP_FILE               "dbcsmap.hlp"
 #define INI_FILE                "dbcsmap.ini"
@@ -170,6 +170,7 @@ MRESULT EXPENTRY ClipWndProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
 void             DrawNice3DBorder( HPS hps, RECTL rcl );
 ULONG            DrawWrappedText( HPS hps, PPOINTL pptPos, RECTL rcl, FONTMETRICS fm, PCBTEXTATTRS pAttrs, UniChar *psuText );
 void             SetClipTextAttrs( HPS hps, PSZ pszFont, LONG lDPI );
+void             AddCodepage( HAB hab, HWND hwnd, ULONG ulID, USHORT usCP );
 void             WindowSetup( HWND hwnd );
 void             CentreWindow( HWND hwnd );
 void             LocateProfile( PSZ pszProfile );

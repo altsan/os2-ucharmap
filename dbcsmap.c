@@ -971,6 +971,32 @@ ULONG DrawWrappedText( HPS hps, PPOINTL pptPos, RECTL rcl, FONTMETRICS fm, PCBTE
 
 
 /* ------------------------------------------------------------------------- *
+ * AddCodepage                                                               *
+ *                                                                           *
+ * Add a codepage to the dropdown list.                                      *
+ *                                                                           *
+ * ARGUMENTS:                                                                *
+ *   HAB    hab:  Anchor-block handle.                                       *
+ *   HWND   hwnd: Handle of the main application window.                     *
+ *   ULONG  ulID: Resource ID of the codepage's description string.          *
+ *   USHORT usCP: Codepage to be added.                                      *
+ *                                                                           *
+ * RETURNS: N/A                                                              *
+ * ------------------------------------------------------------------------- */
+void AddCodepage( HAB hab, HWND hwnd, ULONG ulID, USHORT usCP )
+{
+    CHAR szCP[ CPDESC_MAXZ ],   // name of codepage
+         szBuf[ CPDESC_MAXZ ];  // buffer for string resource
+
+    sprintf( szCP, "%u ", usCP );
+    if ( WinLoadString( hab, 0, ulID, CPDESC_MAXZ-1, szBuf ))
+        strncat( szCP, szBuf, CPDESC_MAXZ-1 );
+    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                       MPFROMSHORT(LIT_END), MPFROMP(szCP) );
+}
+
+
+/* ------------------------------------------------------------------------- *
  * WindowSetup                                                               *
  *                                                                           *
  * Perform some initial setup on the application window.                     *
@@ -1018,44 +1044,54 @@ void WindowSetup( HWND hwnd )
 
     GetCodepagePath( szCPath, CCHMAXPATH );
 
-    // Populate the codepage selector
+    /* Populate the codepage selector.
+     * First, always add the Unicode (UCS-2) codepage; we don't list this
+     * one in numeric form, hence the separate logic here.
+     */
+    if ( ! WinLoadString( pGlobal->hab, 0, IDS_CODEPAGE_1200, CPDESC_MAXZ-1, szBuf ))
+        strcpy( szBuf, "UCS-2");
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("Unicode (Plane 0)"));
+                       MPFROMSHORT(LIT_END), MPFROMP(szBuf) );
+
+    // Add the current system codepage, if it isn't one of our DBCS ones.
     if ( ! IS_DBCS_CODEPAGE( ulCP )) {
         WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                            MPFROMSHORT(LIT_END), MPFROMP(szSysCP) );
     }
-    if ( CodepageIsInstalled( szCPath, 942 )) {
-        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                           MPFROMSHORT(LIT_END), MPFROMP("942 (Japan SJIS-1978)"));
-    }
-    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("943 (Japan SJIS-1990)"));
-    if ( CodepageIsInstalled( szCPath, 944 )) {
-        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                           MPFROMSHORT(LIT_END), MPFROMP("944 (Korea SAA)"));
-    }
-    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                        MPFROMSHORT(LIT_END), MPFROMP("949 (Korea KS-Code)"));
-    if ( CodepageIsInstalled( szCPath, 948 )) {
-        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                           MPFROMSHORT(LIT_END), MPFROMP("948 (Taiwan SAA)"));
-    }
-    WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                       MPFROMSHORT(LIT_END), MPFROMP("950 (Taiwan BIG-5)"));
 
-    if ( CodepageIsInstalled( szCPath, 946 )) {
-        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                           MPFROMSHORT(LIT_END), MPFROMP("946 (China SAA)"));
-    }
-    if ( CodepageIsInstalled( szCPath, 1381 )) {
-        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                           MPFROMSHORT(LIT_END), MPFROMP("1381 (China GB)"));
-    }
-    if ( CodepageIsInstalled( szCPath, 1386 )) {
-        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
-                           MPFROMSHORT(LIT_END), MPFROMP("1386 (China GBK)"));
-    }
+    // Japan SAA (SJIS-1978), if installed
+    if ( CodepageIsInstalled( szCPath, 942 ))
+        AddCodepage( pGlobal->hab, hwnd, IDS_CODEPAGE_942, 942 );
+
+    // Japan Shift-JIS i.e. codepage 932 or 943 (should always be installed)
+    AddCodepage( pGlobal->hab, hwnd, IDS_CODEPAGE_943, 943 );
+
+    // Korea SAA (seems to be an old version of KS-Code)
+    if ( CodepageIsInstalled( szCPath, 944 ))
+        AddCodepage( pGlobal->hab, hwnd, IDS_CODEPAGE_944, 944 );
+
+    // Korea KS-Code (the normal Korean codepage, should always be installed)
+    AddCodepage( pGlobal->hab, hwnd, IDS_CODEPAGE_949, 949 );
+
+    // Taiwan SAA (some legacy Taiwanese encoding, not really sure what it is)
+    if ( CodepageIsInstalled( szCPath, 948 ))
+        AddCodepage( pGlobal->hab, hwnd, IDS_CODEPAGE_948, 948 );
+
+    // Taiwan Big-5 encoding (this is the usual codepage for Taiwan)
+    AddCodepage( pGlobal->hab, hwnd, IDS_CODEPAGE_950, 950 );
+
+    // China SAA (some old PRC encoding, also not really sure)
+    if ( CodepageIsInstalled( szCPath, 946 ))
+        AddCodepage( pGlobal->hab, hwnd, IDS_CODEPAGE_946, 946 );
+
+    // China GB-2312 (used on OS/2 prior to Aurora, I think)
+    if ( CodepageIsInstalled( szCPath, 1381 ))
+        AddCodepage( pGlobal->hab, hwnd, IDS_CODEPAGE_1381, 1381 );
+
+    // China GBK (the standard Chinese/PRC encoding)
+    if ( CodepageIsInstalled( szCPath, 1386 ))
+        AddCodepage( pGlobal->hab, hwnd, IDS_CODEPAGE_1386, 1386 );
+
 
     // Activate ownerdraw mode for each valueset cell
     for ( i = 0; i < 16; i++ ) {

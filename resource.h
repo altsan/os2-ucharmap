@@ -52,6 +52,16 @@
 #define IDS_ERROR_COPYTEXT          10002
 #define IDS_ERROR_COPYUCS           10003
 #define IDS_CODEPAGE_DESC           10004
+#define IDS_CODEPAGE_1200           10010
+#define IDS_CODEPAGE_942            10011
+#define IDS_CODEPAGE_943            10012
+#define IDS_CODEPAGE_944            10013
+#define IDS_CODEPAGE_949            10014
+#define IDS_CODEPAGE_948            10015
+#define IDS_CODEPAGE_950            10016
+#define IDS_CODEPAGE_946            10017
+#define IDS_CODEPAGE_1381           10018
+#define IDS_CODEPAGE_1386           10019
 #define IDS_VERSION                 10100
 #define IDS_COPYRIGHT               10101
 

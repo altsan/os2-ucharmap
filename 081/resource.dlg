@@ -1,0 +1,84 @@
+#ifndef OS2_INCLUDED
+   #include <os2.h>
+#endif
+DLGINCLUDE 1 "resource.h"
+
+CODEPAGE 932
+
+DLGTEMPLATE ID_MAINPROGRAM LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "拡張の文字コード表", ID_MAINPROGRAM, 12, -11, 333, 195, NOT WS_VISIBLE, FCF_SIZEBORDER | FCF_SYSMENU | FCF_TITLEBAR | FCF_MINMAX | FCF_TASKLIST
+    BEGIN
+        VALUESET                                            IDD_CHARMAP,    92,  0,   240, 181, VS_TEXT | VS_BORDER | VS_ITEMBORDER | WS_GROUP
+                                                                                                CTLDATA 8, 0, 16, 16
+                        PRESPARAMS PP_BACKGROUNDCOLORINDEX, SYSCLR_WINDOW
+        GROUPBOX        "エンコーディング",                 -1,             1,   141, 89,  36,  WS_GROUP
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+        GROUPBOX        "選択した文字",               -1,             1,   65,  89,  73,  WS_GROUP
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+        LTEXT           "先行のバイト：",                   IDD_LEADING,    5,   144, 55,  10,  DT_VCENTER
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+        CONTROL         "",                                 IDD_SAMPLE,     5,   77,  81,  53,  "GlyphPreview", WS_GROUP | WS_VISIBLE
+        CTEXT           "",                                 IDD_NUMBER,     6,   67,  79,  8
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+        CONTROL         "",                                 IDD_CODEPAGE,   5,   69,  81,  99,  WC_COMBOBOX, CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP | WS_VISIBLE
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+        CONTROL         ""                                  IDD_OFFSET,     60,  1,   26,  154, WC_COMBOBOX, CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP | WS_VISIBLE
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+        GROUPBOX        "コピーした文字",                   IDD_GBCLIP,     1,   1,   89,  61,  DT_VCENTER
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+        CONTROL         "",                                 IDD_CLIPBOARD,  5,   18,  81,  36,  "ClipboardView", WS_GROUP | WS_VISIBLE
+        PUSHBUTTON      "追加",                             ID_COPY,        5,   4,   24,  12
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+        PUSHBUTTON      "削除",                             ID_DELETE,      30,  4,   24,  12,  WS_DISABLED
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+        PUSHBUTTON      "クリア",                           ID_CLEAR,       55,  4,   31,  12,  WS_DISABLED
+                        PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans Combined"
+
+    END
+END
+
+DLGTEMPLATE IDD_ABOUT LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "製品情報", IDD_ABOUT, 1, 1, 196, 74, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
+            PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Combined"
+    BEGIN
+        ICON            ID_MAINPROGRAM,                     201,            7,   44,  20,  16
+        DEFPUSHBUTTON   "了解",                             DID_CANCEL,     38,  2,   40,  12
+        LTEXT           "拡張の文字コード表",               -1,             38,  61,  150, 8
+                        PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Combined Bold"
+        LTEXT           "バージョン x.y",                   IDD_VERSION,    38,  52,  150, 8
+        GROUPBOX        "",                                 -1,             38,  49,  150, 4
+        LTEXT           "(C) xxxx Alex Taylor",             IDD_COPYRIGHT,  38,  37,  150, 8
+        LTEXT           "GNU General Public License が定める条件によるフリーソフトウェア。",
+                                                            -1,             38,  18,  150, 18, DT_WORDBREAK
+    END
+END
+
+DLGTEMPLATE IDD_FONTDLG
+BEGIN
+    DIALOG  "フォント", IDD_FONTDLG, 1, 1, 153, 95, FS_NOBYTEALIGN | FS_MOUSEALIGN, FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
+            PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Combined"
+    BEGIN
+/* Font dialog controls we actually use */
+        LTEXT           "フォント名：",                         -1,                 3,   85,  100, 8,   DT_VCENTER
+        COMBOBOX        "",                                     DID_NAME,           3,   2,   147, 82,  NOT CBS_SIMPLE | CBS_DROPDOWNLIST
+        LTEXT           "スタイル：",                           -1,                 3,   64,  100, 8,   DT_VCENTER
+        COMBOBOX        "",                                     DID_STYLE,          3,   17,  147, 46,  NOT CBS_SIMPLE | CBS_DROPDOWNLIST
+        DEFPUSHBUTTON   "了解",                                 DID_OK_BUTTON,      3,   2,   40,  12,  WS_GROUP
+        PUSHBUTTON      "取消",                                 DID_CANCEL_BUTTON,  45,  2,   40,  12,  NOT WS_TABSTOP
+        GROUPBOX        "サンプル",                             -1,                 3,   18,  147, 33
+        CTEXT           "abcdABCD",                             DID_SAMPLE,         7,   22,  138, 21,  DT_VCENTER
+                        PRESPARAMS PP_BACKGROUNDCOLOR,          0x00CCCCCCL
+                        PRESPARAMS PP_HILITEBACKGROUNDCOLOR,    0x00CCCCCCL
+                        PRESPARAMS PP_DISABLEDBACKGROUNDCOLOR,  0x00CC00CCL
+/* Standard font dialog controls required by PM but not used by us */
+        COMBOBOX        "",                                     DID_SIZE,           191, 0,   29,  16,  NOT CBS_SIMPLE | CBS_DROPDOWN | NOT WS_VISIBLE
+        AUTOCHECKBOX    "~Display",                             DID_DISPLAY_FILTER, 158, 59,  52,  10,  NOT WS_VISIBLE
+        AUTOCHECKBOX    "~Printer",                             DID_PRINTER_FILTER, 158, 49,  51,  10,  NOT WS_TABSTOP | NOT WS_VISIBLE
+        AUTOCHECKBOX    "Out~line",                             DID_OUTLINE,        158, 39,  42,  10,  NOT WS_VISIBLE
+        AUTOCHECKBOX    "~Underline",                           DID_UNDERSCORE,     158, 29,  46,  10,  NOT WS_TABSTOP | NOT WS_VISIBLE
+        AUTOCHECKBOX    "~Strikeout",                           DID_STRIKEOUT,      158, 19,  47,  10,  NOT WS_TABSTOP | NOT WS_VISIBLE
+    END
+END
+

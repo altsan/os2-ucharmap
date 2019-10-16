@@ -1,0 +1,75 @@
+#include <os2.h>
+#include "resource.h"
+
+ICON ID_MAINPROGRAM   "..\\graphic\\program.ico"
+
+CODEPAGE 932
+
+MENU ID_MAINPROGRAM
+BEGIN
+    SUBMENU "ファイル (~F)",                        IDM_FILE
+    BEGIN
+        MENUITEM "終了 (~X)",                       ID_QUIT,            MIS_TEXT
+    END
+    SUBMENU "編集 (~E)",                            IDM_EDIT
+    BEGIN
+        MENUITEM "選択した文字のコピー\tCtrl+Ins",  ID_COPY,            MIS_TEXT
+        MENUITEM "最後の文字の削除\tBackspace",     ID_DELETE,          MIS_TEXT
+        MENUITEM "クリア\tCtrl+Del",                ID_CLEAR,           MIS_TEXT
+        MENUITEM SEPARATOR
+        MENUITEM "全部もう一度のコピー",            ID_RECOPY,          MIS_TEXT
+    END
+    SUBMENU "オプション (~O)",                      IDM_SETUP
+    BEGIN
+        MENUITEM "文字フォント (~F)...",            ID_FONT,            MIS_TEXT
+        MENUITEM SEPARATOR
+        MENUITEM "~Unicode のコピー",               ID_UCS,             MIS_TEXT, MIA_CHECKED
+    END
+    SUBMENU "ヘルプ (~H)",                          IDM_HELP
+    BEGIN
+        MENUITEM "一般ヘルプ (~G)",                 ID_HELP,            MIS_HELP | MIS_TEXT
+        MENUITEM SEPARATOR
+        MENUITEM "製品情報 (~P)",                   ID_ABOUT,           MIS_TEXT
+    END
+END
+
+STRINGTABLE
+BEGIN
+    IDS_HELP_TITLE          "拡張の文字コード表"
+    IDS_ERROR_CHANGECP      "コードペー %u ジを設定できませんでした。このコードページの必要なファイルがインストールされていない可能性があります。"
+    IDS_ERROR_COPYTEXT      "クリップボードにコピーのエラー\n%s(): 0x%X"
+    IDS_ERROR_COPYUCS       "Unicode のテキストをコピーのエラー\n%s(): 0x%X"
+    IDS_CODEPAGE_DESC       "%u (システムコードページ)"
+    IDS_CODEPAGE_1200       "Unicode (プレーン 0)"
+    IDS_CODEPAGE_942        "(Japan SJIS-1978)"
+    IDS_CODEPAGE_943        "(Japan SJIS-1990)"
+    IDS_CODEPAGE_944        "(Korea SAA)"
+    IDS_CODEPAGE_949        "(Korea KS-Code)"
+    IDS_CODEPAGE_948        "(Taiwan SAA)"
+    IDS_CODEPAGE_950        "(Taiwan BIG-5)"
+    IDS_CODEPAGE_946        "(China SAA)"
+    IDS_CODEPAGE_1381       "(China GB)"
+    IDS_CODEPAGE_1386       "(China GBK)"
+    IDS_VERSION             "バージョン %s"
+    IDS_COPYRIGHT           "Copyright (C) %s Alex Taylor"
+END
+
+ACCELTABLE ID_MAINPROGRAM
+BEGIN
+    VK_F3,        ID_QUIT,      VIRTUALKEY
+    VK_INSERT,    ID_COPY,      VIRTUALKEY | CONTROL
+    VK_DELETE,    ID_CLEAR,     VIRTUALKEY | CONTROL
+    VK_BACKSPACE, ID_DELETE,    VIRTUALKEY
+END
+
+HELPTABLE ID_MAINPROGRAM
+BEGIN
+    HELPITEM ID_MAINPROGRAM, HSTB_MAIN, 100
+END
+
+HELPSUBTABLE HSTB_MAIN
+BEGIN
+END
+
+RCINCLUDE "resource.dlg"
+

@@ -33,7 +33,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_HELP_TITLE          "DBCSMAP"
+    IDS_HELP_TITLE          "Extended Character Map"
     IDS_ERROR_CHANGECP      "Unable to set codepage %u. Your system might not have support for this codepage installed."
     IDS_ERROR_COPYTEXT      "Error copying to clipboard.\n%s(): 0x%X"
     IDS_ERROR_COPYUCS       "Error copying Unicode text.\n%s(): 0x%X"

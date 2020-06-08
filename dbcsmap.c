@@ -1023,7 +1023,8 @@ void WindowSetup( HWND hwnd )
                y  = 0,
                cx = 0,
                cy = 0;
-    ULONG      ulCP;                    // active system codepage
+    ULONG      aulCP[ 3 ] = {0},        // array of system codepages
+               cbCP = 0;                // size of returned codepage array
 
 
     pGlobal = WinQueryWindowPtr( hwnd, 0 );
@@ -1036,12 +1037,6 @@ void WindowSetup( HWND hwnd )
     hicon = WinLoadPointer( HWND_DESKTOP, 0, ID_MAINPROGRAM );
     WinSendMsg( hwnd, WM_SETICON, MPFROMP(hicon), MPVOID );
 
-    // Get the currently active codepage
-    ulCP = WinQueryCp( pGlobal->hmq );
-    if ( ! WinLoadString( pGlobal->hab, 0, IDS_CODEPAGE_DESC, CPDESC_MAXZ-1, szBuf ))
-        sprintf( szBuf, "%u (system codepage)");
-    sprintf( szSysCP, szBuf, ulCP );
-
     GetCodepagePath( szCPath, CCHMAXPATH );
 
     /* Populate the codepage selector.
@@ -1053,8 +1048,23 @@ void WindowSetup( HWND hwnd )
     WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                        MPFROMSHORT(LIT_END), MPFROMP(szBuf) );
 
-    // Add the current system codepage, if it isn't one of our DBCS ones.
-    if ( ! IS_DBCS_CODEPAGE( ulCP )) {
+    // Add any current system codepages which aren't one of our DBCS ones.
+    if ( ! WinLoadString( pGlobal->hab, 0, IDS_CODEPAGE_DESC, CPDESC_MAXZ-1, szBuf ))
+        sprintf( szBuf, "%u (system codepage)");
+    DosQueryCp( sizeof( aulCP ), aulCP, &cbCP );
+
+    if ( aulCP[0] && ! IS_DBCS_CODEPAGE( aulCP[0] )) {
+        sprintf( szSysCP, szBuf, aulCP[0] );
+        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP(szSysCP) );
+    }
+    if ( aulCP[1] && ( aulCP[1] != aulCP[0] ) && ! IS_DBCS_CODEPAGE( aulCP[1] )) {
+        sprintf( szSysCP, szBuf, aulCP[1] );
+        WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
+                           MPFROMSHORT(LIT_END), MPFROMP(szSysCP) );
+    }
+    if ( aulCP[2] && ( aulCP[2] != aulCP[0] ) && ! IS_DBCS_CODEPAGE( aulCP[2] )) {
+        sprintf( szSysCP, szBuf, aulCP[2] );
         WinSendDlgItemMsg( hwnd, IDD_CODEPAGE, LM_INSERTITEM,
                            MPFROMSHORT(LIT_END), MPFROMP(szSysCP) );
     }

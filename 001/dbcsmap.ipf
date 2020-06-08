@@ -137,10 +137,10 @@ on what options were selected at OS/2 install time.)
 :dl break=all.
 
 :dt.System codepage
-:dd.The currently active system codepage is provided as an explicit option
-(unless it happens to be the same as one of the other encodings listed below).
-Its actual codepage number (which is displayed in the list) will vary depending
-on your system configuration.
+:dd.Each of the currently configured system codepages (up to two) is provided
+as an option, unless they happen to be the same as one of the other encodings
+listed below. The actual codepage numbers will (which will vary depending on
+your system configuration) will be shown in the description.
 
 :dt.942 (Japan SJIS-1978)
 :dd.This is an older version of Shift-JIS encoding (see codepage 943, below)

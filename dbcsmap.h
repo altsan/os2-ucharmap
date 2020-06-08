@@ -1,5 +1,6 @@
 #define INCL_DOSERRORS
 #define INCL_DOSMISC
+#define INCL_DOSNLS
 #define INCL_DOSRESOURCES
 #define INCL_GPI
 #define INCL_WIN
@@ -14,8 +15,8 @@
 // ----------------------------------------------------------------------------
 // CONSTANTS
 
-#define SZ_VERSION              "1.61"
-#define SZ_COPYRIGHT            "2005, 2019"
+#define SZ_VERSION              "1.62"
+#define SZ_COPYRIGHT            "2005, 2020"
 
 #define HELP_FILE               "dbcsmap.hlp"
 #define INI_FILE                "dbcsmap.ini"

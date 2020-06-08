@@ -142,7 +142,7 @@ necesita una licencia v lida de Microsoft Office.)
 :dt.Bitstream Cyberbit
 
 :dd.Una fuente proporcional con remates con soporte completo de muchos idiomas.
-est  disponible en
+Est  disponible en
 http&colon.//ftp.netscape.com/pub/communicator/extras/fonts/windows/Cyberbit.ZIP
 y es gratuita para su uso no comercial.
 
@@ -268,19 +268,19 @@ res=400.Copiar caracteres:elink. para los detalles.)
 .* ----------------------------------------------------------------------------
 :h1 x=left y=bottom width=100% height=100% res=400.Copiar caracteres
 
-Un car cter se puede copiar al portapapeles mediante un doble click del rat¢n
-sobre ‚l en el mapa de caracteres, o marc ndolo y pulsando ®A¤adir¯.
+Un car cter puede copiarse al portapapeles mediante una doble pulsaci¢n del
+rat¢n sobre el mismo en el mapa de caracteres, o seleccion ndolo y pulsando
+®A¤adir¯.
 
 :p.El primer car cter copiado de esta forma tras abrir &nomprog. sustituir  el
 contenido previo del portapapeles (si lo hay). Sin embargo, cualesquiera
-caracteres subsiguientes que copie se anexar n a los previamente copiados.
-&Nomprog. ®recuerda¯ los caracteres copiados previamente, as¡ que incluso si
-vac¡a el portapapeles o sustituye su contenido usando otro programa, los
-caracteres que vd. copiara usando &nomprog. volver n a llenar el portapapeles
-la pr¢xima vez que copie un car cter. (O alternativamente, si selecciona
-®Volver a copiar todo¯ en el men£ ®Editar¯.) Estos caracteres ®recordados¯
-constituyen un ®almacenamiento intermedio del portapapeles¯ y se muestran en el
-panel del portapapeles.
+caracteres copiados a continuaci¢n se le anexar n. &Nomprog. ®recuerda¯ los
+caracteres copiados previamente, as¡ que incluso si vac¡a el portapapeles o
+sustituye su contenido usando otro programa, los caracteres que vd. copiara
+usando &nomprog. volver n a llenar el portapapeles la pr¢xima vez que copie un
+car cter. (O alternativamente, si selecciona ®Volver a copiar todo¯ en el men£
+®Editar¯.) Estos caracteres ®recordados¯ constituyen un ®almacenamiento
+intermedio del portapapeles¯ y se muestran en el panel del portapapeles.
 
 :p.El bot¢n ®Vaciar¯ borra el contenido actual del portapapeles, incluidos
 cualesquiera caracteres copiados previamente con &nomprog.. El bot¢n ®Suprimir¯
@@ -722,36 +722,42 @@ to attach them to the start of each source file to most effectively
 convey the exclusion of warranty; and each file should have at least
 the "copyright" line and a pointer to where the full notice is found.
 
-:xmp.
-   &lt.one line to give the program's name and a brief idea of what it does.&gt.
-   Copyright (C) 19yy  &lt.name of author&gt.
+:lm margin=4.
+:font facename='System Monospaced' size=13x1.
+:p.&lt.one line to give the program's name and a brief idea of what it does.&gt.
+.br
+Copyright (C) 19yy  &lt.name of author&gt.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
+:p.This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 2 of the License, or (at your option) any
+later version.
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+:p.This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-:exmp.
+:p.You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place, Suite 330, Boston, MA  02111-1307  USA
+:font facename=default.
+:lm margin=1.
 
 :p.Also add information on how to contact you by electronic and paper mail.
 
 :p.If the program is interactive, make it output a short notice like this
 when it starts in an interactive mode&colon.
 
-:xmp.
-   Gnomovision version 69, Copyright (C) 19yy name of author
-   Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type 'show w'.
-   This is free software, and you are welcome to redistribute it
-   under certain conditions; type 'show c' for details.
-:exmp.
+:lm margin=4.
+:font facename='System Monospaced' size=13x1.
+:p.Gnomovision version 69, Copyright ¸ 19yy name of author
+.br
+Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type 'show w'.
+.br
+This is free software, and you are welcome to redistribute it
+under certain conditions; type 'show c' for details.
+:font facename=default.
+:lm margin=1.
 
 :p.The hypothetical commands 'show w' and 'show c' should show the appropriate
 parts of the General Public License.  Of course, the commands you use may
@@ -762,13 +768,16 @@ mouse-clicks or menu items--whatever suits your program.
 school, if any, to sign a "copyright disclaimer" for the program, if
 necessary.  Here is a sample; alter the names&colon.
 
-:xmp.
-   Yoyodyne, Inc., hereby disclaims all copyright interest in the program
-   'Gnomovision' (which makes passes at compilers) written by James Hacker.
+:lm margin=4.
+:font facename='System Monospaced' size=13x1.
+:p.Yoyodyne, Inc., hereby disclaims all copyright interest in the program
+.br
+'Gnomovision' (which makes passes at compilers) written by James Hacker.
 
-   &lt.signature of Ty Coon&gt., 1 April 1989
-   Ty Coon, President of Vice
-:exmp.
+:p.&lt.signature of Ty Coon&gt., 1 April 1989
+.br
+Ty Coon, President of Vice :font
+facename=default. :lm margin=1.
 
 :p.This General Public License does not permit incorporating your program into
 proprietary programs.  If your program is a subroutine library, you may

@@ -9,7 +9,7 @@
 !endif
 
 CC     = icc.exe
-RC     = rc.exe
+RC     = rc16.exe
 LINK   = ilink.exe
 IPFC   = ipfc.exe
 CFLAGS = /Gm /Ss /Q+ /Wuse      # /Wrea /Wuni

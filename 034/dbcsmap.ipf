@@ -30,7 +30,7 @@ caracteres, todos los cuales se muestran en la matriz de caracteres.
 
 :p.Las p ginas de c¢digos multi-byte, as¡ como Unicode (UCS-2), se subdividen
 en agrupaciones de 256 valores de caracteres identificados mediante un n£mero
-que denominaremos :hp1.&leadbyte.:ehp1.. Selecionar el &leadbyte. hace que
+que denominaremos :hp1.&leadbyte.:ehp1.. Seleccionar el &leadbyte. hace que
 todos los caracteres en la agrupaci¢n se muestren en la matriz.
 
 :nt.Aunque cada agrupaci¢n contiene 256 :hp1.valores:ehp1. de caracteres, no
@@ -278,7 +278,7 @@ caracteres copiados a continuaci¢n se le anexar n. &Nomprog. ®recuerda¯ los
 caracteres copiados previamente, as¡ que incluso si vac¡a el portapapeles o
 sustituye su contenido usando otro programa, los caracteres que vd. copiara
 usando &nomprog. volver n a llenar el portapapeles la pr¢xima vez que copie un
-car cter. (O alternativamente, si selecciona ®Volver a copiar todo¯ en el men£
+car cter. (O alternativamente, si selecciona ®Repetir copiar¯ en el men£
 ®Editar¯.) Estos caracteres ®recordados¯ constituyen un ®almacenamiento
 intermedio del portapapeles¯ y se muestran en el panel del portapapeles.
 

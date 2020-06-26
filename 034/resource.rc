@@ -11,11 +11,11 @@ BEGIN
     END
     SUBMENU "~Editar",                              IDM_EDIT
     BEGIN
-        MENUITEM "~Copiar seleccionado\tCtrl+Ins",   ID_COPY,           MIS_TEXT
-        MENUITEM "~Suprimir el £ltimo\tRetroceso",   ID_DELETE,         MIS_TEXT
-        MENUITEM "~Vaciar\tCtrl+Supr",               ID_CLEAR,          MIS_TEXT
+        MENUITEM "~Copiar seleccionado\tCtrl+Ins",  ID_COPY,           MIS_TEXT
+        MENUITEM "~Suprimir el £ltimo\tRetroceso",  ID_DELETE,         MIS_TEXT
+        MENUITEM "~Vaciar\tCtrl+Supr",              ID_CLEAR,          MIS_TEXT
         MENUITEM SEPARATOR
-        MENUITEM "Volve~r a copiar todo",            ID_RECOPY,         MIS_TEXT
+        MENUITEM "~Repetir copiar",                 ID_RECOPY,         MIS_TEXT
     END
     SUBMENU "~Opciones",                            IDM_SETUP
     BEGIN
@@ -33,7 +33,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_HELP_TITLE          "Mapa de Caracteres Extendido"
+    IDS_HELP_TITLE          "DBCSMAP"
     IDS_ERROR_CHANGECP      "No se pudo establecer la p gina de c¢digos %u. Puede que su sistema no tenga instalado el soporte para ella."
     IDS_ERROR_COPYTEXT      "Error copiando al portapapeles.\n%s(): 0x%X"
     IDS_ERROR_COPYUCS       "Error copiando texto Unicode.\n%s(): 0x%X"

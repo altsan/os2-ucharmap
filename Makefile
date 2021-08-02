@@ -22,16 +22,44 @@ LIBS   = libconv.lib libuls.lib
 
 BL_DESC = "Extended Character Map (ctry $(NLV))"
 BL_AUTH = "Alexander Taylor"
-BL_VER  = "1.60"
 
-!if "$(NLV)" == "081"
-    RFLAGS = $(RFLAGS) -cp 932
-!elif "$(NLV)" == "082"
-    RFLAGS = $(RFLAGS) -cp 949
-!elif "$(NLV)" == "086"
-    RFLAGS = $(RFLAGS) -cp 1386
-!elif "$(NLV)" == "088"
-    RFLAGS = $(RFLAGS) -cp 950
+!ifdef NLV
+    LANGDIR  = $(NLV)
+!   if "$(NLV)" == "007"
+       LANGCODE = RUS
+!   elif "$(NLV)" == "031"
+       LANGCODE = NLD
+!   elif "$(NLV)" == "033"
+       LANGCODE = FRA
+!   elif "$(NLV)" == "034"
+       LANGCODE = ESP
+!   elif "$(NLV)" == "039"
+       LANGCODE = ITA
+!   elif "$(NLV)" == "046"
+       LANGCODE = SVE
+!   elif "$(NLV)" == "049"
+       LANGCODE = DEU
+!   elif "$(NLV)" == "055"
+       LANGCODE = PTB
+!   elif "$(NLV)" == "081"
+       LANGCODE = JPN
+       RFLAGS = $(RFLAGS) -cp 932
+!   elif "$(NLV)" == "082"
+       LANGCODE = KOR
+       RFLAGS = $(RFLAGS) -cp 949
+!   elif "$(NLV)" == "086"
+       LANGCODE = PRC
+       RFLAGS = $(RFLAGS) -cp 1386
+!   elif "$(NLV)" == "088"
+       LANGCODE = CHT
+       RFLAGS = $(RFLAGS) -cp 950
+!   else
+       LANGCODE = ENU
+!   endif
+    IPFFLAGS = -d:$(LANGDIR) -l:$(LANGCODE)
+!else
+    LANGDIR = 001
+    IPFFLAGS = -d:$(LANGDIR)
 !endif
 
 !ifdef DEBUG

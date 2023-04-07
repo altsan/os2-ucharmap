@@ -5,7 +5,7 @@ DLGINCLUDE 1 "resource.h"
 
 DLGTEMPLATE ID_MAINPROGRAM LOADONCALL MOVEABLE DISCARDABLE
 BEGIN
-    DIALOG  "Mapa de Caracteres Extendido", ID_MAINPROGRAM, 12, -11, 333, 195, NOT WS_VISIBLE, FCF_SIZEBORDER | FCF_SYSMENU | FCF_TITLEBAR | FCF_MINMAX | FCF_TASKLIST
+    DIALOG  "Mapa de caracteres extendido", ID_MAINPROGRAM, 12, -11, 333, 195, NOT WS_VISIBLE, FCF_SIZEBORDER | FCF_SYSMENU | FCF_TITLEBAR | FCF_MINMAX | FCF_TASKLIST
     BEGIN
         VALUESET                                            IDD_CHARMAP,    89,  0,   243, 181, VS_TEXT | VS_BORDER | VS_ITEMBORDER | WS_GROUP
                                                                                                 CTLDATA 8, 0, 16, 16
@@ -43,7 +43,7 @@ BEGIN
     BEGIN
         ICON            ID_MAINPROGRAM,                     201,            7,   34,  20,  16
         DEFPUSHBUTTON   "Bien",                             DID_CANCEL,     38,  2,   40,  12
-        LTEXT           "Mapa de Caracteres Extendido",     -1,             38,  51,  150, 8
+        LTEXT           "Mapa de caracteres extendido",     -1,             38,  51,  150, 8
                         PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
         LTEXT           "Versi¢n x.y",                      IDD_VERSION,    38,  42,  150, 8
         GROUPBOX        "",                                 -1,             38,  39,  150, 4

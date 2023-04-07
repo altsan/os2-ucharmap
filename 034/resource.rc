@@ -33,7 +33,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_HELP_TITLE          "DBCSMAP"
+    IDS_HELP_TITLE          "Mapa de caracteres extendido"
     IDS_ERROR_CHANGECP      "No se pudo establecer la p gina de c¢digos %u. Puede que su sistema no tenga instalado el soporte para ella."
     IDS_ERROR_COPYTEXT      "Error copiando al portapapeles.\n%s(): 0x%X"
     IDS_ERROR_COPYUCS       "Error copiando texto Unicode.\n%s(): 0x%X"

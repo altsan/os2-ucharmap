@@ -5,34 +5,33 @@ DLGINCLUDE 1 "resource.h"
 
 DLGTEMPLATE ID_MAINPROGRAM LOADONCALL MOVEABLE DISCARDABLE
 BEGIN
-    DIALOG  "Расширенная карта символов", ID_MAINPROGRAM, 12, -11, 343, 195, NOT WS_VISIBLE, FCF_SIZEBORDER | FCF_SYSMENU | FCF_TITLEBAR | FCF_MINMAX | FCF_TASKLIST
+    DIALOG  "Расширенная карта символов", ID_MAINPROGRAM, 12, -11, 356, 195, NOT WS_VISIBLE, FCF_SIZEBORDER | FCF_SYSMENU | FCF_TITLEBAR | FCF_MINMAX | FCF_TASKLIST
     BEGIN
-        VALUESET                                            IDD_CHARMAP,    99,  0,   243, 181, VS_TEXT | VS_BORDER | VS_ITEMBORDER | WS_GROUP
+        VALUESET                                            IDD_CHARMAP,    113, 0,   243, 181, VS_TEXT | VS_BORDER | VS_ITEMBORDER | WS_GROUP
                                                                                                 CTLDATA 8, 0, 16, 16
                         PRESPARAMS PP_BACKGROUNDCOLORINDEX, SYSCLR_WINDOW
-        GROUPBOX        "Кодировка",                        -1,             1,   141, 96,  36,  WS_GROUP
+        GROUPBOX        "Кодировка",                        -1,             1,   141, 110, 36,  WS_GROUP
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        GROUPBOX        "Выделенный символ",                -1,             1,   65,  96,  73,  WS_GROUP
+        GROUPBOX        "Выделенный символ",                -1,             1,   65,  110, 73,  WS_GROUP
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        LTEXT           "Начальный байт:",                  IDD_LEADING,    5,   145, 62,  10,  DT_VCENTER
+        LTEXT           "Начальный байт:",                  IDD_LEADING,    5,   145, 76,  10,  DT_VCENTER
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        CONTROL         "",                                 IDD_SAMPLE,     5,   77,  88,  53,  "GlyphPreview", WS_GROUP | WS_VISIBLE
-        CTEXT           "",                                 IDD_NUMBER,     6,   67,  86,  8
+        CONTROL         "",                                 IDD_SAMPLE,     5,   77,  102, 53,  "GlyphPreview", WS_GROUP | WS_VISIBLE
+        CTEXT           "",                                 IDD_NUMBER,     6,   67,  100, 8
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        CONTROL         "",                                 IDD_CODEPAGE,   5,   69,  88,  99,  WC_COMBOBOX, CBS_DROPDOWNLIST | LS_HORZSCROLL | WS_GROUP | WS_TABSTOP | WS_VISIBLE
+        CONTROL         "",                                 IDD_CODEPAGE,   5,   69,  102, 99,  WC_COMBOBOX, CBS_DROPDOWNLIST | LS_HORZSCROLL | WS_GROUP | WS_TABSTOP | WS_VISIBLE
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        CONTROL         ""                                  IDD_OFFSET,     68,  1,   25,  154, WC_COMBOBOX, CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP | WS_VISIBLE
+        CONTROL         ""                                  IDD_OFFSET,     82,  1,   25,  154, WC_COMBOBOX, CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP | WS_VISIBLE
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        GROUPBOX        "Скопированные символы",            IDD_GBCLIP,     1,   1,   96,  61,  DT_VCENTER
+        GROUPBOX        "Скопированные символы",            IDD_GBCLIP,     1,   1,   110, 61,  DT_VCENTER
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        CONTROL         "",                                 IDD_CLIPBOARD,  5,   18,  88,  36,  "ClipboardView", WS_GROUP | WS_VISIBLE
-        PUSHBUTTON      "~Добавить",                        ID_COPY,        4,   4,   30,  12
+        CONTROL         "",                                 IDD_CLIPBOARD,  5,   18,  102, 36,  "ClipboardView", WS_GROUP | WS_VISIBLE
+        PUSHBUTTON      "~Добавить",                        ID_COPY,        4,   4,   35,  12
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        PUSHBUTTON      "~Удалить",                         ID_DELETE,      35,  4,   28,  12,  WS_DISABLED
+        PUSHBUTTON      "~Удалить",                         ID_DELETE,      40,  4,   32,  12,  WS_DISABLED
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-        PUSHBUTTON      "~Очистить",                        ID_CLEAR,       64,  4,   30,  12,  WS_DISABLED
+        PUSHBUTTON      "~Очистить",                        ID_CLEAR,       73,  4,   35,  12,  WS_DISABLED
                         PRESPARAMS PP_FONTNAMESIZE,         "9.WarpSans"
-
     END
 END
 

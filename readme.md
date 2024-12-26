@@ -16,6 +16,10 @@ Extended Character Map does not require your system codepage(s) to be set to
 any particular value.  It should be fully-functional on any language version
 of OS/2.
 
+The default makefile is for IBM C/C++ version 3.65.  To build, run 
+`nmake32 NLV=xxx` where xxx is a three-digit country code for the national
+language version to be built (defaults to 001).
+
 ## License
 
 Extended Character Map for OS/2
